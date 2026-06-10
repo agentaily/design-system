@@ -1,0 +1,5 @@
+/* Agentaily webfonts.
+   NOTE: No brand font binaries were provided — these are Google Fonts
+   substitutions (flagged in readme.md). Swap for licensed files by
+   replacing these @import lines with @font-face rules. */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap');

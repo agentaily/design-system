@@ -1,0 +1,28 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Foundations/Intro" />
+
+# agentaily<span style={{display:"inline-block",width:"0.55em",height:"1.05em",background:"currentColor",verticalAlign:"text-bottom",marginLeft:4}}></span>
+
+**Agentaily** 是一个 AI chatbot。品牌一句话:**极客风格,简约,大气,科技感** —— 先给结论,再给推导,不废话,不卖萌。
+
+## 核心规则
+
+- **单色优先。** 没有色相意义上的 accent —— 主按钮在暗色下是白底黑字,亮色下反转。绿/黄/红只作状态,从不装饰。无渐变。
+- **双主题。** 暗色 ink 是默认(`:root`),亮色 paper 走 `[data-theme="light"]`。用右上角工具栏切换。
+- **字体。** Space Grotesk(display + UI)+ JetBrains Mono(代码、时间戳、标签)。CJK 回退系统字体。
+- **硬边角。** 2px chips / 4px 按钮输入 / 8px 卡片对话框。默认头像是方的。
+- **层级靠 1px hairline 边框,不靠阴影。** 阴影只给浮层(菜单、对话框)。
+- **动效。** 一个 ease(`cubic-bezier(0.2,0,0,1)`),三个时长(120/200/320ms)。光标 `steps(1)` 闪烁,spinner `steps(8)` 旋转。无弹跳。
+- **永不使用 emoji。** 状态用方点和色彩 token 表达;⌘ ⌥ ⇧ ⏎ ▣ ▍ 这些字符是词汇表的一部分。
+
+## 母题(每屏最多用 2 个)
+
+块光标 ▍(活性)· 点阵网格(潜在空间)· 角标记(选择/精度)· mono 全大写标签。
+
+## 文案声音
+
+平实、精确、略干。好的高级工程师的声音:短陈述句、具体数字、零填充词。
+
+- ✓ "Rate limited. Retry in 18s." ✗ "Oops! Something went wrong 😅"
+- ✓ "有什么要解决的?" ✗ "✨ 开启你的奇妙旅程!"

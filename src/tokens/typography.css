@@ -1,0 +1,36 @@
+/* ============================================================
+   Agentaily — typography
+   Space Grotesk for display + UI, JetBrains Mono for code,
+   labels and the terminal motif. CJK falls back to system
+   (PingFang SC / Microsoft YaHei / Noto Sans CJK).
+   ============================================================ */
+
+:root {
+  --font-display: "Space Grotesk", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  --font-body: "Space Grotesk", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "PingFang SC", "Microsoft YaHei", ui-monospace, monospace;
+
+  /* type scale */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-md: 15px;       /* default UI / chat body */
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+  --text-3xl: 44px;
+  --text-hero: 68px;
+
+  /* weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  /* line heights */
+  --leading-tight: 1.1;
+  --leading-snug: 1.35;
+  --leading-body: 1.6;
+
+  /* tracking */
+  --tracking-tight: -0.02em;   /* display sizes */
+  --tracking-label: 0.08em;    /* mono ALL-CAPS labels */
+}
