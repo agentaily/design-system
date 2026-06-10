@@ -1,6 +1,6 @@
 # agentaily design system
 
-Agentaily(AI chatbot)设计系统的 Storybook 实现。品牌一句话:**极客风格,简约,大气,科技感**。
+Agentaily(AI chatbot)设计系统:116 个 React 组件 + Storybook,单色暗色优先。品牌一句话:**极客风格,简约,大气,科技感**。
 
 设计规范全文见 [DESIGN.md](./DESIGN.md)(来自 claude.ai/design 的 handoff)。
 
@@ -11,6 +11,43 @@ npm install
 npm run storybook        # 开发服务器 http://localhost:6006
 npm run build-storybook  # 静态构建到 storybook-static/
 ```
+
+## 分发(三条渠道)
+
+### ① npm 组件库
+
+作为 React 组件库被其他项目消费。ESM-only,每个组件一个模块(`preserveModules`),消费方可 tree-shake 未用到的组件;`react` / `react-dom` 为 peer dependency。
+
+```bash
+npm run build:lib   # 产出 dist/:每组件一个 .js + index.d.ts + styles.css + assets/
+```
+
+产物结构:
+
+| 路径 | 内容 |
+|---|---|
+| `dist/index.js` | ESM 入口,re-export 全部 110 个组件符号 |
+| `dist/components/**/*.js` | 每个组件独立模块(含运行时 CSS 注入) |
+| `dist/index.d.ts` + `dist/components/**/*.d.ts` | TypeScript 类型契约 |
+| `dist/styles.css` | 内联好的 tokens + 字体,消费方 import 一次 |
+| `dist/assets/logo/*.svg` | 品牌 mark |
+
+消费方用法:
+
+```jsx
+import "agentaily-design-system/styles.css";          // 一次,加载 tokens
+import { Button, Composer, Reasoning } from "agentaily-design-system";
+```
+
+构建已配好但**尚未发布**。发布只差一步(`npm publish`,`publishConfig.access` 已设为 public)。注:`package.json` 的 `license` 暂为 `UNLICENSED`,公开发布前请确认授权条款。
+
+### ② 托管 Storybook(活文档)
+
+`.github/workflows/storybook.yml` 在推送到 `main` 时自动 `build-storybook` 并部署到 GitHub Pages。仓库 Settings → Pages 的 Source 设为 **GitHub Actions** 后即生效。
+
+### ③ Agent Skill
+
+仓库根目录的 `SKILL.md` 让整个目录可作为 Claude Code / Agent Skill 分发,供 AI 按 Agentaily 品牌产出设计稿或生产代码。
 
 ## 结构
 

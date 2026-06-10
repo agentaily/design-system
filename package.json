@@ -1,20 +1,68 @@
 {
   "name": "agentaily-design-system",
-  "private": true,
   "version": "0.1.0",
+  "description": "Agentaily design system — dark-first monochrome React component library (116 components) + Storybook.",
   "type": "module",
+  "license": "UNLICENSED",
+  "author": "Agentaily",
+  "homepage": "https://github.com/agentaily/design-system#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agentaily/design-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/agentaily/design-system/issues"
+  },
+  "keywords": [
+    "design-system",
+    "react",
+    "components",
+    "ui",
+    "storybook",
+    "agentaily"
+  ],
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./assets/*": "./dist/assets/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "DESIGN.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "gen:barrel": "node scripts/generate-barrel.mjs",
+    "clean": "node scripts/clean.mjs",
+    "build:js": "vite build --config vite.lib.config.js",
+    "build:css": "node scripts/build-css.mjs",
+    "build:types": "node scripts/build-types.mjs",
+    "build:assets": "node scripts/copy-assets.mjs",
+    "build:lib": "npm run clean && npm run gen:barrel && npm run build:js && npm run build:css && npm run build:types && npm run build:assets",
+    "prepublishOnly": "npm run build:lib"
   },
-  "dependencies": {
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
   "devDependencies": {
     "@storybook/addon-docs": "^10.4.3",
     "@storybook/react-vite": "^10.4.3",
     "@vitejs/plugin-react": "^5.0.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "storybook": "^10.4.3",
     "vite": "^7.0.0"
   }
