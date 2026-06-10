@@ -2,6 +2,8 @@
 
 Agentaily(AI chatbot)设计系统:116 个 React 组件 + Storybook,单色暗色优先。品牌一句话:**极客风格,简约,大气,科技感**。
 
+📖 **在线 Storybook:** https://agentaily.github.io/design-system/
+
 设计规范全文见 [DESIGN.md](./DESIGN.md)(来自 claude.ai/design 的 handoff)。
 
 ## 开发
@@ -43,7 +45,7 @@ import { Button, Composer, Reasoning } from "agentaily-design-system";
 
 ### ② 托管 Storybook(活文档)
 
-`.github/workflows/storybook.yml` 在推送到 `main` 时自动 `build-storybook` 并部署到 GitHub Pages。仓库 Settings → Pages 的 Source 设为 **GitHub Actions** 后即生效。
+`.github/workflows/storybook.yml` 在推送到 `main` 时自动 `build-storybook` 并部署到 GitHub Pages —— 已上线:**https://agentaily.github.io/design-system/**。
 
 ### ③ Agent Skill
 
