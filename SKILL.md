@@ -20,7 +20,7 @@ Read **`DESIGN.md`** first — it is the full brand guide (content fundamentals,
 
 ## How to use
 
-- **Production code:** install the package (`npm i agentaily-design-system`), `import "agentaily-design-system/styles.css"` once at the app root, then `import { Button, Composer, Reasoning } from "agentaily-design-system"`. Compose primitives — do not re-implement them.
+- **Production code:** install the package (`npm i @agentaily/design-system`), `import "@agentaily/design-system/styles.css"` once at the app root, then `import { Button, Composer, Reasoning } from "@agentaily/design-system"`. Compose primitives — do not re-implement them.
 - **Throwaway artifacts (slides, mocks, static prototypes):** copy `dist/styles.css` and the logo SVGs next to a static HTML file, link the stylesheet, and build with the brand's classes/tokens. Follow the voice rules in `DESIGN.md` (plain, precise, no emoji, concrete numbers).
 
 If invoked without specific guidance, ask what the user wants to build, ask a couple of scoping questions, then act as an expert Agentaily designer who outputs HTML artifacts **or** production React, depending on the need. Stay on-brand: monochrome inversion (no hue accent), Space Grotesk + JetBrains Mono, hairline borders over shadows, 2/4/8px radii, mono ALL-CAPS labels, blinking block cursor ▍, dot grid, corner ticks. No emoji, no gradients, no bounce.

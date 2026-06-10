@@ -37,8 +37,8 @@ npm run build:lib   # 产出 dist/:每组件一个 .js + index.d.ts + styles.css
 消费方用法:
 
 ```jsx
-import "agentaily-design-system/styles.css";          // 一次,加载 tokens
-import { Button, Composer, Reasoning } from "agentaily-design-system";
+import "@agentaily/design-system/styles.css";          // 一次,加载 tokens
+import { Button, Composer, Reasoning } from "@agentaily/design-system";
 ```
 
 构建已配好但**尚未发布**。发布只差一步(`npm publish`,`publishConfig.access` 已设为 public)。注:`package.json` 的 `license` 暂为 `UNLICENSED`,公开发布前请确认授权条款。
