@@ -1,0 +1,30 @@
+name: Publish to npm
+
+# Publish on a GitHub Release. Uses OIDC Trusted Publishing — no NPM_TOKEN
+# secret is stored. One-time setup: publish v0.1.0 once manually to create
+# the package, then on npmjs.com add this repo + workflow as a Trusted
+# Publisher for @agentaily/design-system.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # OIDC token for trusted publishing + provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: npm install -g npm@latest # ensure trusted-publishing support
+      - run: npm ci
+      # Tag must match the package version (skipped for manual dispatch).
+      - if: github.event_name == 'release'
+        run: test "v$(node -p "require('./package.json').version")" = "${{ github.ref_name }}"
+      - run: npm publish # prepublishOnly runs build:lib; OIDC + provenance are automatic

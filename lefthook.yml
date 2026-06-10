@@ -1,0 +1,21 @@
+# Git hooks via lefthook. Installed automatically on `npm install`
+# (see the "prepare" script). Run manually: `npx lefthook run pre-commit`.
+
+pre-commit:
+  parallel: false # both jobs touch the git index — keep them sequential
+  commands:
+    # Format only the files being committed; re-stage what Prettier changed.
+    format:
+      glob: "*.{js,jsx,mjs,cjs,css,md,json,yml,yaml}"
+      run: npx prettier --write {staged_files}
+      stage_fixed: true
+    # Keep the generated public entry in sync when components are added/removed.
+    sync-barrel:
+      glob: "src/components/**/*.jsx"
+      run: npm run gen:barrel && git add src/index.js
+
+pre-push:
+  commands:
+    # Catch a broken library build before it leaves the machine.
+    build:
+      run: npm run build:lib
