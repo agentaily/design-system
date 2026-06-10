@@ -55,7 +55,11 @@ import { Button, Composer, Reasoning } from "@agentaily/design-system";
 
 ### ③ Agent Skill
 
-仓库根目录的 `SKILL.md` 让整个目录可作为 Claude Code / Agent Skill 分发,供 AI 按 Agentaily 品牌产出设计稿或生产代码。
+`skill/SKILL.md` 是一个自包含的 Claude Code / Agent Skill —— 面向**消费者**的使用指南(品牌规则 + 如何用 `@agentaily/design-system` 包 + Storybook 目录链接),不含仓库内部实现。把 `skill/` 软链到 `~/.claude/skills/agentaily-design` 即可全局调用:
+
+```bash
+ln -s "$PWD/skill" ~/.claude/skills/agentaily-design
+```
 
 ## 结构
 

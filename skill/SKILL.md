@@ -1,0 +1,60 @@
+---
+name: agentaily-design
+description: Use this skill to generate well-branded Agentaily interfaces and assets (AI chatbot — 极客风格，简约，大气，科技感), either as production React using the @agentaily/design-system package or as throwaway static prototypes. Self-contained brand rules + usage; no repo internals needed.
+---
+
+# Agentaily design system — usage skill
+
+**Agentaily** is an AI chatbot. Brand brief, verbatim: **极客风格，简约，大气，科技感** (geek-flavored, minimal, expansive, technological). It answers in plain language first, then shows its work: conclusion → derivation. No hype, no mascots.
+
+This skill is the **consumer guide** for the published design system. You do not need the repo internals — build on top of the package and the rules below.
+
+- **Package:** `@agentaily/design-system` (npm) · **Catalog:** https://agentaily.github.io/design-system/ (Storybook) · **Full brand guide:** https://github.com/agentaily/design-system/blob/main/DESIGN.md
+
+## Use it in production React
+
+```bash
+npm i @agentaily/design-system
+```
+
+```jsx
+import "@agentaily/design-system/styles.css"; // once, at the app root — loads design tokens
+import { Button, Composer, Reasoning } from "@agentaily/design-system";
+```
+
+- **110 components across 12 categories** — buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities. Compose them; never re-implement a primitive.
+- **Find a component and its props:** browse the Storybook (every variant/state is a story); TypeScript contracts ship with the package (`.d.ts`).
+- Dark theme (`ink`) is the default. For light, set `data-theme="light"` on a wrapping element.
+
+## Use it for throwaway artifacts (slides, mocks, static HTML)
+
+Link the published stylesheet and the logo, then build with the tokens/classes:
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/@agentaily/design-system/dist/styles.css" />
+```
+
+Logo marks: `@agentaily/design-system/assets/logo/agentaily-mark-{white,black}.svg`.
+
+## Brand rules (stay on-brand)
+
+- **Color — monochrome, no hue accent.** Two scales: `ink` (dark, default on `:root`) and `paper` (light, under `[data-theme="light"]`). The "accent" is **inversion**: primary = white-on-black in dark, black-on-white in light. Green/amber/red (`--ok/--warn/--danger`) are **status only**, never decorative. No gradients (except the dot-grid mask fade).
+- **Type.** Space Grotesk (display + UI) and JetBrains Mono (code, timestamps, labels). CJK falls back to system sans. Display sizes use tight tracking (−0.02em), medium weight — never bold-black. Body 15px / 1.6, max ~76ch. The signature is the **mono ALL-CAPS label** (12px, +0.08em): `CONVERSATIONS`.
+- **Spacing — 4px grid.** Outer space generous (sections 72–96px, 大气); inner rhythm tight (8–16px, 极客). Chat column maxes 760px, container 1120px, sidebar 272px.
+- **Corners — hard-edged.** 2px chips · 4px buttons/inputs · 8px cards/dialogs. Default avatars are square (4px).
+- **Hierarchy via 1px hairlines, not shadows.** Shadows only for floating layers (menus, dialogs).
+- **Interaction.** Hover = background fill or border step-up, never opacity on text. Press = `translateY(1px)`. Focus = double ring (keyboard); inputs swap border-color.
+- **Motion.** One ease `cubic-bezier(0.2,0,0,1)`, three durations 120/200/320ms. Decisive, no bounce. Mechanical exceptions: cursor blinks in `steps(1)`, spinner rotates in `steps(8)`. Respect `prefers-reduced-motion`.
+- **Motifs (use 1, max 2 per view):** block cursor ▍ · dot grid · corner ticks · mono ALL-CAPS labels.
+- **Icons:** Lucide (24px grid, stroke 2, `currentColor`, rendered 14–20px). Unicode ⌘ ⌥ ⇧ ⏎ ▣ ▍ are typed text, set in mono. Never filled icons, duotone, or emoji-as-icon.
+
+## Voice
+
+Plain, precise, slightly dry — the voice of a good senior engineer: short declaratives, concrete numbers, zero filler. **No emoji, ever** (status is carried by square dots + color tokens). Numbers are copy: "0.4s", "128k", "Retry in 18s". Bilingual by design (English carries the tech identity, Chinese the body copy), but pick one language per element. Sentence case for product copy and buttons; mono ALL-CAPS for the label motif; the wordmark is always lowercase **agentaily**.
+
+- ✓ "Rate limited. Retry in 18s." ✗ "Oops! Something went wrong 😅"
+- ✓ "有什么要解决的？" ✗ "✨ 开启你的奇妙旅程！"
+
+## When invoked without specifics
+
+Ask what the user wants to build, ask a couple of scoping questions, then act as an expert Agentaily designer — output production React (consuming the package) **or** static HTML artifacts, depending on the need. Read the full DESIGN.md (linked above) when you need depth beyond these rules.
