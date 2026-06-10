@@ -26,22 +26,28 @@ npm run build:lib   # 产出 dist/:每组件一个 .js + index.d.ts + styles.css
 
 产物结构:
 
-| 路径 | 内容 |
-|---|---|
-| `dist/index.js` | ESM 入口,re-export 全部 110 个组件符号 |
-| `dist/components/**/*.js` | 每个组件独立模块(含运行时 CSS 注入) |
-| `dist/index.d.ts` + `dist/components/**/*.d.ts` | TypeScript 类型契约 |
-| `dist/styles.css` | 内联好的 tokens + 字体,消费方 import 一次 |
-| `dist/assets/logo/*.svg` | 品牌 mark |
+| 路径                                            | 内容                                      |
+| ----------------------------------------------- | ----------------------------------------- |
+| `dist/index.js`                                 | ESM 入口,re-export 全部 110 个组件符号    |
+| `dist/components/**/*.js`                       | 每个组件独立模块(含运行时 CSS 注入)       |
+| `dist/index.d.ts` + `dist/components/**/*.d.ts` | TypeScript 类型契约                       |
+| `dist/styles.css`                               | 内联好的 tokens + 字体,消费方 import 一次 |
+| `dist/assets/logo/*.svg`                        | 品牌 mark                                 |
 
 消费方用法:
 
 ```jsx
-import "@agentaily/design-system/styles.css";          // 一次,加载 tokens
+import "@agentaily/design-system/styles.css"; // 一次,加载 tokens
 import { Button, Composer, Reasoning } from "@agentaily/design-system";
 ```
 
-构建已配好但**尚未发布**。发布只差一步(`npm publish`,`publishConfig.access` 已设为 public)。注:`package.json` 的 `license` 暂为 `UNLICENSED`,公开发布前请确认授权条款。
+**版本与发布走 [Changesets](https://github.com/changesets/changesets)**:
+
+- 改动值得发版时,跑 `npm run changeset` 选 patch/minor/major 并写一行摘要,把生成的 `.changeset/*.md` 跟代码一起提交。
+- `.github/workflows/release.yml` 在 push 到 `main` 时,要么开一个「Version Packages」PR(消费 changeset、bump 版本、写 `CHANGELOG.md`),要么在该 PR 合并后**发布到 npm**(OIDC trusted publishing + provenance,仓库零 token)并创建 GitHub Release。
+- **首发为引导步骤**:scoped 包要先存在才能配可信发布者,所以 v0.1.0 先本地手动 `npm publish` 一次;之后到 npmjs.com 给该包加 Trusted Publisher(org `agentaily` / repo `design-system` / workflow `release.yml`),后续全自动。
+
+注:`package.json` 的 `license` 暂为 `UNLICENSED`,公开发布前请确认授权条款。
 
 ### ② 托管 Storybook(活文档)
 

@@ -1,0 +1,46 @@
+name: Release
+
+# Changesets-driven release. On push to main this either opens/updates a
+# "Version Packages" PR (consuming pending changesets) or, once that PR is
+# merged, publishes to npm and creates the GitHub Release.
+on:
+  push:
+    branches: [main]
+
+# Avoid overlapping version PRs / publishes.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write # push the Version PR branch + create GitHub Releases
+  pull-requests: write # open/update the Version Packages PR
+  id-token: write # OIDC for npm trusted publishing + provenance
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # changesets needs full history
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: npm install -g npm@latest # ensure trusted-publishing support
+      - run: npm ci
+      - uses: changesets/action@v1
+        with:
+          version: npx changeset version # bump + changelog in the Version PR
+          publish: npm run release # `changeset publish` once versions land
+          commit: "chore: version packages"
+          title: "chore: version packages"
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: "true"
+          # No NPM_TOKEN: publishing uses OIDC trusted publishing. Configure
+          # this repo + workflow as a Trusted Publisher on npmjs.com first.
+          # Fallback if you ever opt out of OIDC: add a granular-access
+          # NPM_TOKEN secret and set NODE_AUTH_TOKEN here.
