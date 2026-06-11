@@ -26,6 +26,26 @@ import { Button, Composer, Reasoning } from "@agentaily/design-system";
 - **Find a component and its props:** browse the Storybook (every variant/state is a story); TypeScript contracts ship with the package (`.d.ts`).
 - Dark theme (`ink`) is the default. For light, set `data-theme="light"` on a wrapping element.
 
+### Forms
+
+Layered and library-agnostic. Controls (`Field`/`Input`/`Select`/…) own layout and never depend on a form engine. `Form` + `FormActions` add pure structure. `Form.useForm` is an **optional**, zero-dependency, react-hook-form-aligned hook (values/errors/touched, per-field rules incl. async, `handleSubmit`, full `formState`); `Form.useFieldArray` covers dynamic lists. Drop the hook for RHF/TanStack and the controls still work.
+
+```jsx
+import { Form, FormActions, Input, Button } from "@agentaily/design-system";
+
+const form = Form.useForm({ initialValues: { email: "" }, mode: "onBlur" });
+<Form onSubmit={form.handleSubmit}>
+  <Input label="Email" {...form.field("email", { required: "Email is required." })} />
+  <FormActions bordered>
+    <Button type="submit" onClick={form.handleSubmit}>
+      Save
+    </Button>
+  </FormActions>
+</Form>;
+```
+
+`form.field(name, rules)` spreads `value/onChange/onBlur/error`; checkboxes use `{ type: "checkbox" }`. In sandboxed iframes also put `onClick={form.handleSubmit}` on the submit button — native form submission is blocked there.
+
 ## Use it for throwaway artifacts (slides, mocks, static HTML)
 
 Link the published stylesheet and the logo, then build with the tokens/classes:
