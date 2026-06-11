@@ -88,7 +88,7 @@ Examples — ✓ "Rate limited. Retry in 18s." ✗ "Oops! Something went wrong �
 | `guidelines/` | 17 specimen cards (Colors ×4, Type ×4, Spacing ×5, Brand ×4) |
 | `states/` | 5 interaction-state matrices (buttons, form controls, selection/nav, loading/streaming, status/feedback) — force-rendered hover/focus/active/disabled |
 | `components/buttons/` | Button, IconButton, **ButtonGroup** |
-| `components/inputs/` | Input, Textarea, Select, Switch, Checkbox, Label, RadioGroup, Slider, Toggle, ToggleGroup, **Field, FieldGroup, InputGroup, InputOTP, Combobox, Calendar, DatePicker** |
+| `components/inputs/` | Input, Textarea, Select, Switch, Checkbox, Label, RadioGroup, Slider, Toggle, ToggleGroup, **Field, FieldGroup, InputGroup, InputOTP, Combobox, Calendar, DatePicker, Form (+FormActions, Form.useForm)** |
 | `components/display/` | Card, Badge, Avatar, Tabs, Kbd, Separator, Skeleton, Progress, Accordion, Breadcrumb, Table, Pagination, Empty, **Collapsible, Item, Carousel, Chart (BarChart/LineChart), DataTable, Typography (Prose/Text)** |
 | `components/feedback/` | Spinner, Toast, Tooltip, Dialog, Alert |
 | `components/overlay/` | Popover, DropdownMenu, Command, Sheet, **HoverCard, ContextMenu, Menubar, NavigationMenu, AlertDialog** |
@@ -104,7 +104,9 @@ Examples — ✓ "Rate limited. Retry in 18s." ✗ "Oops! Something went wrong �
 | `ui_kits/docs/` | Documentation site (interactive) |
 | `SKILL.md` | Agent-skill entry point |
 
-Every component ships `<Name>.jsx` + `<Name>.d.ts` (props) + `<Name>.prompt.md` (usage) — **116 component exports across 11 categories** (buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities). This is a deliberately exhaustive set covering shadcn/ui primitives + AI-native surfaces (reasoning, tools, agents, voice, workflow graphs). Consume via the compiled bundle: `window.AxiomDesignSystem_7fc962`. Read each component's `.prompt.md` for copy-paste usage.
+Every component ships `<Name>.jsx` + `<Name>.d.ts` (props) + `<Name>.prompt.md` (usage) — **118 component exports across 11 categories** (buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities). This is a deliberately exhaustive set covering shadcn/ui primitives + AI-native surfaces (reasoning, tools, agents, voice, workflow graphs). Consume via the compiled bundle: `window.AxiomDesignSystem_7fc962`. Read each component's `.prompt.md` for copy-paste usage.
+
+**Forms are layered, not monolithic.** Presentational controls (Input/Select/Field…) own layout and never depend on a form engine. `Form` + `FormActions` add pure structure. `Form.useForm` is an **optional**, zero-dependency orchestration hook (values/errors/touched/validate/submit) exposed off the capitalized `Form` export — drop it for react-hook-form or TanStack and the controls still work. Errors surface only after blur or submit; spread `form.field(name)` onto any value control, or `form.field(name, {type:"checkbox"})` for boolean ones.
 
 ## CAVEATS
 - **Fonts are CDN substitutions:** Space Grotesk + JetBrains Mono via Google Fonts `@import` (no binaries shipped). Replace `tokens/fonts.css` with real `@font-face` + files for offline/production use.
