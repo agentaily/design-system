@@ -78,6 +78,7 @@ export * from "./components/inputs/Checkbox.jsx";
 export * from "./components/inputs/Combobox.jsx";
 export * from "./components/inputs/DatePicker.jsx";
 export * from "./components/inputs/Field.jsx";
+export * from "./components/inputs/Form.jsx";
 export * from "./components/inputs/Input.jsx";
 export * from "./components/inputs/InputGroup.jsx";
 export * from "./components/inputs/InputOTP.jsx";

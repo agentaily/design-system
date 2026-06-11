@@ -3,10 +3,12 @@ import React from "react";
 const AX_FIELD_CSS = `
 .ax-field { display: flex; flex-direction: column; gap: 6px; }
 .ax-field__label {
+  display: inline-flex; align-items: center; gap: 6px;
   font-family: var(--font-mono); font-size: var(--text-xs);
   font-weight: var(--weight-medium); letter-spacing: var(--tracking-label);
   text-transform: uppercase; color: var(--text-faint);
 }
+.ax-field__req { color: var(--danger); }
 /* State priority is declared explicitly via layer order, low -> high.
    This frees each state rule from fighting specificity, so no :not() chains
    are needed and source order is no longer load-bearing. Add a new state by
@@ -31,8 +33,11 @@ const AX_FIELD_CSS = `
   .ax-input:focus { outline: none; border-color: var(--fg-2); box-shadow: 0 0 0 3px var(--focus-soft); }
 }
 @layer ax-error {
-  .ax-input--error { border-color: var(--danger); }
-  .ax-input--error:focus { box-shadow: 0 0 0 3px var(--danger-dim); }
+  /* Outline (not just border-color) so the error ring is robust: it survives
+     overlay/instrumentation layers that repaint control borders, and never
+     shifts layout. Offset -1px parks it exactly on the border edge. */
+  .ax-input--error { border-color: var(--danger); outline: 1px solid var(--danger); outline-offset: -1px; }
+  .ax-input--error:focus { box-shadow: 0 0 0 3px var(--danger-dim); outline-color: var(--danger); }
 }
 @layer ax-disabled {
   .ax-input:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--border-default); }
@@ -52,22 +57,28 @@ export function Input({
   label,
   hint,
   error,
+  required = false,
   mono = false,
   className = "",
   ...rest
 }) {
-  const cls = [
-    "ax-input",
-    mono ? "ax-input--mono" : "",
-    error ? "ax-input--error" : "",
-    className,
-  ].filter(Boolean).join(" ");
+  const cls = ["ax-input", mono ? "ax-input--mono" : "", error ? "ax-input--error" : "", className]
+    .filter(Boolean)
+    .join(" ");
   return (
     <label className="ax-field">
-      {label ? <span className="ax-field__label">{label}</span> : null}
-      <input className={cls} {...rest} />
-      {error ? <span className="ax-field__hint ax-field__hint--error">{error}</span> :
-        hint ? <span className="ax-field__hint">{hint}</span> : null}
+      {label ? (
+        <span className="ax-field__label">
+          {label}
+          {required ? <span className="ax-field__req">*</span> : null}
+        </span>
+      ) : null}
+      <input className={cls} required={required} {...rest} />
+      {error ? (
+        <span className="ax-field__hint ax-field__hint--error">{error}</span>
+      ) : hint ? (
+        <span className="ax-field__hint">{hint}</span>
+      ) : null}
     </label>
   );
 }

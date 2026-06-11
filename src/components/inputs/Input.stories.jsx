@@ -58,3 +58,24 @@ export const Controlled = {
     );
   },
 };
+
+export const Required = {
+  render: () => {
+    const [name, setName] = React.useState("");
+    const [touched, setTouched] = React.useState(false);
+    const error = touched && !name.trim() ? "Display name is required." : undefined;
+    return (
+      <div style={{ width: 320 }}>
+        <Input
+          label="Display name"
+          required
+          placeholder="Lin Wei"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onBlur={() => setTouched(true)}
+          error={error}
+        />
+      </div>
+    );
+  },
+};
