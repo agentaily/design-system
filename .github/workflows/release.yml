@@ -3,6 +3,11 @@ name: Release
 # Changesets-driven release. On push to main this either opens/updates a
 # "Version Packages" PR (consuming pending changesets) or, once that PR is
 # merged, publishes to npm and creates the GitHub Release.
+#
+# The Version PR is opened with a GitHub App token (agentaily-release-bot), NOT
+# GITHUB_TOKEN: PRs opened by GITHUB_TOKEN never trigger new workflows, so their
+# CI never runs and they can't auto-merge. The App identity lets CI run; the
+# auto-merge step then merges the PR once it's green — no human clicks.
 on:
   push:
     branches: [main]
@@ -21,9 +26,18 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      # App token → the Version PR is authored by agentaily-release-bot, so its
+      # CI runs automatically (GITHUB_TOKEN-authored PRs would stay stuck on
+      # "1 workflow awaiting approval").
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # changesets needs full history
+          token: ${{ steps.app-token.outputs.token }} # push the Version branch as the App
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -31,6 +45,7 @@ jobs:
       - run: npm install -g npm@latest # ensure trusted-publishing support
       - run: npm ci
       - uses: changesets/action@v1
+        id: changesets
         with:
           version: npx changeset version # bump + changelog in the Version PR
           publish: npm run release # `changeset publish` once versions land
@@ -38,9 +53,18 @@ jobs:
           title: "chore: version packages"
           createGithubReleases: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }} # open/update the PR + GH Release as the App
           NPM_CONFIG_PROVENANCE: "true"
           # No NPM_TOKEN: publishing uses OIDC trusted publishing. Configure
           # this repo + workflow as a Trusted Publisher on npmjs.com first.
           # Fallback if you ever opt out of OIDC: add a granular-access
           # NPM_TOKEN secret and set NODE_AUTH_TOKEN here.
+      # Once the Version PR exists, queue auto-merge — GitHub merges it the
+      # moment required checks go green. The post-merge run (no pending
+      # changesets, so no PR) skips this step.
+      - name: Auto-merge the Version PR once CI is green
+        if: steps.changesets.outputs.pullRequestNumber
+        run: gh pr merge --squash --auto "$PR"
+        env:
+          PR: ${{ steps.changesets.outputs.pullRequestNumber }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
