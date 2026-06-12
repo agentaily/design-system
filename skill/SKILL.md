@@ -22,9 +22,9 @@ import "@agentaily/design-system/styles.css"; // once, at the app root — loads
 import { Button, Composer, Reasoning } from "@agentaily/design-system";
 ```
 
-- **110 components across 12 categories** — buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities. Compose them; never re-implement a primitive.
+- **112 components across 15 categories** — buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities, plus the product-domain layers **settings, auth, review**. Compose them; never re-implement a primitive.
 - **Find a component and its props:** browse the Storybook (every variant/state is a story); TypeScript contracts ship with the package (`.d.ts`).
-- Dark theme (`ink`) is the default. For light, set `data-theme="light"` on a wrapping element.
+- Light theme (`paper`) is the default (on `:root`). For dark, set `data-theme="dark"` on a wrapping element (e.g. `<html data-theme="dark">`).
 
 ### Forms
 
@@ -46,6 +46,48 @@ const form = Form.useForm({ initialValues: { email: "" }, mode: "onBlur" });
 
 `form.field(name, rules)` spreads `value/onChange/onBlur/error`; checkboxes use `{ type: "checkbox" }`. In sandboxed iframes also put `onClick={form.handleSubmit}` on the submit button — native form submission is blocked there.
 
+### Page shells & frames
+
+Full-page layouts are **live components**, not copy-templates — every region is a slot, so you fill content and the chrome stays in sync on package upgrades. `AppShell` (sidebar + topbar + content), `DesignerShell` (two-pane chat/preview, draggable divider), `DocsLayout` (nav · article · TOC), `SettingsPage` (+ `SettingsPage.Card`), and `SignInPage` (split-brand auth page). Bar heights are tokens (`--topbar-h` / `--bar-h`) so panes line up.
+
+```jsx
+import { AppShell, AccountControl, Icon } from "@agentaily/design-system";
+
+<AppShell
+  nav={[{ id: "overview", label: "Overview", icon: <Icon name="layout" size={16} /> }]}
+  crumb={
+    <>
+      workspace / <b>Overview</b>
+    </>
+  }
+  account={<AccountControl user={user} onLogin={openAuth} onLogout={signOut} />}
+>
+  {/* your screen */}
+</AppShell>;
+```
+
+### Headless hooks (logic without UI)
+
+Some logic ships as a **headless hook**, exposed as a static on the component it pairs with (mirroring `Form.useForm`). The hook owns state; the caller injects it, so one piece of state can drive UI in several places.
+
+- `Queue.useQueue({ onFirst, onBatch })` → `{ queue, busy, enqueue, remove, reset }` — keep-sending-while-busy buffer; pair with `<ConversationThread controller={q} />` (pure-render chat surface).
+- `AuthDialog.useAuth(storageKey?)` → `{ user, signIn, signOut }` — localStorage-persisted session; pair with `<AuthDialog>` + `<AccountControl>`.
+
+```jsx
+import { ConversationThread, Queue } from "@agentaily/design-system";
+
+const q = Queue.useQueue({
+  onFirst: async (text) => {
+    push({ role: "user", text });
+    await run(text);
+  },
+  onBatch: async (texts) => texts.forEach((t) => push({ role: "user", text: t })),
+});
+<ConversationThread controller={q} messages={messages} draft={draft} onDraftChange={setDraft} />;
+```
+
+For credential/connection UIs there are also `SecretField` (masked input + show/hide), `StatusPill` (connection status chip), `TestRow` / `HelpSteps` (connection-card atoms), and the `IntegrationSettings` modal that composes them. `Icon` is the unified Lucide set (`Icon.names` lists all); `BrandMark` is the agentaily mark + wordmark. `MarkupLayer` (review) is a point-at-an-element overlay driven by `data-mk-label`.
+
 ## Use it for throwaway artifacts (slides, mocks, static HTML)
 
 Link the published stylesheet and the logo, then build with the tokens/classes:
@@ -58,7 +100,7 @@ Logo marks: `@agentaily/design-system/assets/logo/agentaily-mark-{white,black}.s
 
 ## Brand rules (stay on-brand)
 
-- **Color — monochrome, no hue accent.** Two scales: `ink` (dark, default on `:root`) and `paper` (light, under `[data-theme="light"]`). The "accent" is **inversion**: primary = white-on-black in dark, black-on-white in light. Green/amber/red (`--ok/--warn/--danger`) are **status only**, never decorative. No gradients (except the dot-grid mask fade).
+- **Color — monochrome, no hue accent.** Two scales: `paper` (light, default on `:root`) and `ink` (dark, under `[data-theme="dark"]`). The "accent" is **inversion**: primary = black-on-white in light, white-on-black in dark. Green/amber/red (`--ok/--warn/--danger`) are **status only**, never decorative. No gradients (except the dot-grid mask fade).
 - **Type.** Space Grotesk (display + UI) and JetBrains Mono (code, timestamps, labels). CJK falls back to system sans. Display sizes use tight tracking (−0.02em), medium weight — never bold-black. Body 15px / 1.6, max ~76ch. The signature is the **mono ALL-CAPS label** (12px, +0.08em): `CONVERSATIONS`.
 - **Spacing — 4px grid.** Outer space generous (sections 72–96px, 大气); inner rhythm tight (8–16px, 极客). Chat column maxes 760px, container 1120px, sidebar 272px.
 - **Corners — hard-edged.** 2px chips · 4px buttons/inputs · 8px cards/dialogs. Default avatars are square (4px).

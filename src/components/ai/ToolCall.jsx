@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 const AX_TOOLCALL_CSS = `
-.ax-tool { border: 1px solid var(--border-default); border-radius: var(--radius-2); background: var(--bg-0); overflow: hidden; font-family: var(--font-mono); }
-[data-theme="light"] .ax-tool { background: var(--bg-1); }
+.ax-tool { border: 1px solid var(--border-default); border-radius: var(--radius-2); background: var(--bg-1); overflow: hidden; font-family: var(--font-mono); }
+[data-theme="dark"] .ax-tool { background: var(--bg-0); }
 .ax-tool__head { display: flex; align-items: center; gap: 10px; width: 100%; appearance: none; background: none; border: none; cursor: pointer; text-align: left; padding: 9px 12px; }
 .ax-tool__head:focus-visible { outline: none; box-shadow: var(--ring); }
 .ax-tool__icon { width: 14px; height: 14px; flex: none; color: var(--text-faint); }
@@ -34,21 +34,64 @@ if (typeof document !== "undefined" && !document.getElementById("ax-toolcall-css
   document.head.appendChild(s);
 }
 
-const Wrench = <svg className="ax-tool__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.1 2.1-2.4-.6-.6-2.4 2.1-2.1z"></path></svg>;
-const Chev = <svg className="ax-tool__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"></path></svg>;
+const Wrench = (
+  <svg
+    className="ax-tool__icon"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.1 2.1-2.4-.6-.6-2.4 2.1-2.1z"></path>
+  </svg>
+);
+const Chev = (
+  <svg
+    className="ax-tool__chev"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="m6 9 6 6 6-6"></path>
+  </svg>
+);
 
 const STATUS_LABEL = { running: "Running", done: "Done", error: "Error" };
 
-export function ToolCall({ name, args, result, status = "done", defaultOpen = false, className = "", ...rest }) {
+export function ToolCall({
+  name,
+  args,
+  result,
+  status = "done",
+  defaultOpen = false,
+  className = "",
+  ...rest
+}) {
   const [open, setOpen] = useState(defaultOpen);
-  const fmt = (v) => typeof v === "string" ? v : JSON.stringify(v, null, 2);
+  const fmt = (v) => (typeof v === "string" ? v : JSON.stringify(v, null, 2));
   return (
-    <div className={["ax-tool", "ax-tool--" + status, open ? "ax-tool--open" : "", className].filter(Boolean).join(" ")} {...rest}>
+    <div
+      className={["ax-tool", "ax-tool--" + status, open ? "ax-tool--open" : "", className]
+        .filter(Boolean)
+        .join(" ")}
+      {...rest}
+    >
       <button className="ax-tool__head" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         {Wrench}
-        <span className="ax-tool__name"><b>{name}</b><span className="ax-tool__paren">()</span></span>
+        <span className="ax-tool__name">
+          <b>{name}</b>
+          <span className="ax-tool__paren">()</span>
+        </span>
         <span className="ax-tool__spacer"></span>
-        <span className="ax-tool__status"><span className="ax-tool__dot"></span>{STATUS_LABEL[status]}</span>
+        <span className="ax-tool__status">
+          <span className="ax-tool__dot"></span>
+          {STATUS_LABEL[status]}
+        </span>
         {Chev}
       </button>
       <div className="ax-tool__body" style={{ display: open ? "flex" : "none" }}>

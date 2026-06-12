@@ -6,21 +6,21 @@
 
 :root {
   /* radii — kept deliberately small */
-  --radius-1: 2px;     /* chips, kbd, code tags */
-  --radius-2: 4px;     /* buttons, inputs */
-  --radius-3: 8px;     /* cards, message bubbles, dialogs */
+  --radius-1: 2px; /* chips, kbd, code tags */
+  --radius-2: 4px; /* buttons, inputs */
+  --radius-3: 8px; /* cards, message bubbles, dialogs */
   --radius-full: 999px;
 
-  /* shadows — dark theme leans on borders, not shadows */
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.35);
-  --shadow-3: 0 16px 48px rgba(0, 0, 0, 0.5);
+  /* shadows — light theme uses soft ambient shadows */
+  --shadow-1: 0 1px 2px rgba(17, 17, 19, 0.06);
+  --shadow-2: 0 4px 16px rgba(17, 17, 19, 0.08);
+  --shadow-3: 0 16px 48px rgba(17, 17, 19, 0.14);
 
   /* motion */
   --ease-out: cubic-bezier(0.2, 0, 0, 1); /* @kind other */
-  --dur-1: 120ms; /* @kind other */    /* hovers, presses */
-  --dur-2: 200ms; /* @kind other */    /* reveals, toggles */
-  --dur-3: 320ms; /* @kind other */    /* dialogs, page-level */
+  --dur-1: 120ms; /* @kind other */ /* hovers, presses */
+  --dur-2: 200ms; /* @kind other */ /* reveals, toggles */
+  --dur-3: 320ms; /* @kind other */ /* dialogs, page-level */
 
   /* focus */
   --ring: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--focus-ring);
@@ -29,8 +29,9 @@
   --blur-overlay: 12px;
 }
 
-[data-theme="light"] {
-  --shadow-1: 0 1px 2px rgba(17, 17, 19, 0.06);
-  --shadow-2: 0 4px 16px rgba(17, 17, 19, 0.08);
-  --shadow-3: 0 16px 48px rgba(17, 17, 19, 0.14);
+[data-theme="dark"] {
+  /* dark theme leans on borders, not shadows */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-3: 0 16px 48px rgba(0, 0, 0, 0.5);
 }

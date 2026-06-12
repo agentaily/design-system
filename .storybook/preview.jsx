@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
 import "../src/styles.css";
 
-/* Agentaily is dark-first ("ink"); light ("paper") is scoped under
-   [data-theme="light"] in tokens/colors.css. */
+/* Agentaily is light-first ("paper", on :root); dark ("ink") is scoped under
+   [data-theme="dark"] in tokens/colors.css. Light needs no attribute — clearing
+   it falls back to the :root (paper) defaults. */
 const WithTheme = (Story, context) => {
-  const theme = context.globals.theme || "dark";
+  const theme = context.globals.theme || "light";
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
+    if (theme === "dark") document.documentElement.setAttribute("data-theme", "dark");
+    else document.documentElement.removeAttribute("data-theme");
   }, [theme]);
   return <Story />;
 };
@@ -28,7 +30,7 @@ export default {
       },
     },
   },
-  initialGlobals: { theme: "dark" },
+  initialGlobals: { theme: "light" },
   parameters: {
     layout: "padded",
     backgrounds: { disable: true },
@@ -49,6 +51,9 @@ export default {
           "Voice",
           "Workflow",
           "Utilities",
+          "Settings",
+          "Auth",
+          "Review",
         ],
       },
     },
