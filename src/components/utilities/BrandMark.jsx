@@ -24,7 +24,7 @@ if (typeof document !== "undefined" && !document.getElementById("ax-brandmark-cs
 export function BrandMark({
   size = 20,
   wordmark = false,
-  cursor = true,
+  cursor = false,
   blink = true,
   className = "",
   ...rest

@@ -123,8 +123,9 @@ export * from "./components/overlay/Sheet.jsx";
 export * from "./components/review/MarkupLayer.jsx";
 
 // settings
+export * from "./components/settings/DeepSeekCard.jsx";
+export * from "./components/settings/FeishuCard.jsx";
 export * from "./components/settings/HelpSteps.jsx";
-export * from "./components/settings/IntegrationSettings.jsx";
 export * from "./components/settings/TestRow.jsx";
 
 // utilities

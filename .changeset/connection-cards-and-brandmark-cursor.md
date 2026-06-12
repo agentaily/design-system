@@ -1,0 +1,11 @@
+---
+"@agentaily/design-system": minor
+---
+
+Replace the `IntegrationSettings` modal with two pure-display connection cards, and turn the BrandMark cursor off by default. Second round aligned with downstream `form-design` after the 0.5.0 backend-seam round — the seam approach was the wrong shape; state belongs to the caller, not the component.
+
+- **BREAKING — `IntegrationSettings` removed.** The all-in-one modal welded localStorage persistence + a Save bar + readiness gating onto the two cards; downstream hit hard walls (an empty `catch` swallowing `onSave` rejects, no backend-error slot, Save blocked by `allReady` so the "save → backend validates → 400" path was unreachable, and a built-in `localStorage` nobody downstream uses). It is gone, along with its internal `localStorage`. Consumers move to the two cards below and own their own config / persistence / Save / gating. The only current downstream (`form-design`) is switching to the cards, so this breaks no one in practice; on `0.x` it ships as a **minor**.
+- **New `settings/DeepSeekCard`** (LLM key) **+ `settings/FeishuCard`** (Feishu Bitable data sink) — **pure-display** connection cards: props in (per-field `value` / `onChange`, `status`, `result`, `masked`, field `error`s, `help`…), events out (`onTest`). **Zero state, zero localStorage, zero save bar, zero readiness gating** — the caller owns the config object, persistence, the Save button, backend-error display, and any "both connected?" gate (the same headless philosophy as `Form.useForm` / `Queue.useQueue`). Each composes `SecretField` / `StatusPill` / `TestRow` / `HelpSteps`; the masked-secret echo is derived from props (`masked && !value`) and is never re-submitted. Both ship `.d.ts` + `.prompt.md` (a controlled + backend-wired example) and Storybook stories, plus a `ConnectionCards` reference story where the caller owns the readiness rail + Save bar.
+- **`BrandMark` `cursor` now defaults to `false`.** The block cursor (a brand liveness motif) is off by default so every layout shell (`DesignerShell` / `SignInPage` / `AppShell` / `SettingsPage` / `DocsLayout` …) reads clean without each shell passing a prop. Opt back in with `<BrandMark wordmark cursor />`. Behavioral default change, visual-only.
+
+Now 114 components.

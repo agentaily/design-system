@@ -10,16 +10,18 @@ export default {
     cursor: { control: "boolean" },
     blink: { control: "boolean" },
   },
-  args: { size: 20, wordmark: true, cursor: true, blink: true },
+  args: { size: 20, wordmark: true, cursor: false, blink: true },
 };
 
+// Default lockup: no cursor — shells read clean.
 export const Default = {};
 
 export const MarkOnly = { args: { wordmark: false } };
 
-export const StaticCursor = { args: { blink: false } };
+// Opt in to the block cursor (the brand liveness motif).
+export const WithCursor = { args: { cursor: true } };
 
-export const NoCursor = { args: { cursor: false } };
+export const StaticCursor = { args: { cursor: true, blink: false } };
 
 export const Sizes = {
   render: () => (
