@@ -2,7 +2,7 @@
  * Two-pane AI-designer frame: a chat column + a live preview, separated by a
  * draggable divider, collapsing to one pane with a segmented switcher on phones.
  * Pure frame — pass `chat` / `preview` / top-bar slots and mount your own
- * overlays (AuthDialog, IntegrationSettings, MarkupLayer) as siblings. The
+ * overlays (AuthDialog, integration cards, MarkupLayer) as siblings. The
  * preview pane is position:relative so a MarkupLayer can fill it.
  */
 export interface DesignerShellProps {

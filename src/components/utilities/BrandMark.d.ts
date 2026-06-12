@@ -8,7 +8,7 @@ export interface BrandMarkProps {
   size?: number;
   /** Render the "agentaily" wordmark after the mark. @default false */
   wordmark?: boolean;
-  /** Show the blinking block cursor after the wordmark. @default true */
+  /** Show the block cursor after the wordmark. Off by default in lockups; opt in for the liveness motif. @default false */
   cursor?: boolean;
   /** Animate the cursor (blink). Set false for a solid, static cursor. @default true */
   blink?: boolean;

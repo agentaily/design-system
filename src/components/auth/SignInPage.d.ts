@@ -39,7 +39,7 @@ export interface SignInPageProps {
   defaultMode?: "signin" | "signup";
   /** Fires when the footer link flips mode — wire to your router (/signin ↔ /signup). */
   onModeChange?: (mode: "signin" | "signup") => void;
-  /** Brand-panel lockup. @default <BrandMark wordmark /> (blinking cursor) */
+  /** Brand-panel lockup. @default <BrandMark wordmark /> (no cursor) */
   brand?: React.ReactNode;
   /**
    * All user-facing strings, deep-merged over the English defaults. Per-mode

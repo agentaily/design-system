@@ -5,7 +5,7 @@ import { BrandMark } from "../utilities/BrandMark.jsx";
 // and a live preview on the right, separated by a draggable divider, collapsing
 // to a single pane with a segmented switcher on phones. Pure frame: pass `chat`
 // and `preview` nodes plus top-bar slots; mount your own overlays (AuthDialog,
-// IntegrationSettings, MarkupLayer) as siblings.
+// integration cards, MarkupLayer) as siblings.
 const AX_DESIGNERSHELL_CSS = `
 .ax-dshell { display: flex; flex-direction: column; height: 100%; background: var(--surface-page); }
 .ax-dshell__top { display: flex; align-items: center; gap: 16px; height: var(--topbar-h); flex: none; padding: 0 16px; border-bottom: 1px solid var(--border-default); background: var(--surface-panel); }
