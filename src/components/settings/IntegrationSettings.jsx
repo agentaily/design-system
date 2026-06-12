@@ -8,6 +8,7 @@ import { Icon } from "../utilities/Icon.jsx";
 import { IconButton } from "../buttons/IconButton.jsx";
 import { SecretField } from "../inputs/SecretField.jsx";
 import { Select } from "../inputs/Select.jsx";
+import { Spinner } from "../feedback/Spinner.jsx";
 import { StatusPill } from "../display/StatusPill.jsx";
 import { Switch } from "../inputs/Switch.jsx";
 import { TestRow } from "./TestRow.jsx";
@@ -139,15 +140,59 @@ const S_FIELD_MAP = [
   { from: null, to: "来源链接", tag: "自动" },
 ];
 
-function s_load() {
-  try {
-    return JSON.parse(localStorage.getItem(S_LS_KEY)) || {};
-  } catch (e) {
-    return {};
-  }
+const S_DEFAULTS = {
+  dsKey: "",
+  dsModel: "deepseek-chat",
+  capOn: false,
+  cap: "200",
+  dsStatus: "idle",
+  dsResult: "",
+  appId: "",
+  secret: "",
+  link: "",
+  fsStatus: "idle",
+  fsResult: "",
+  saved: false,
+};
+
+// Normalize a raw stored/external blob into a full config. Non-ok statuses
+// collapse to idle on (re)load — a stored "error"/"testing" is never trusted.
+function s_normalize(raw) {
+  const r = raw || {};
+  return {
+    dsKey: r.dsKey || "",
+    dsModel: r.dsModel || "deepseek-chat",
+    capOn: !!r.capOn,
+    cap: r.cap || "200",
+    dsStatus: r.dsStatus === "ok" ? "ok" : "idle",
+    dsResult: r.dsResult || "",
+    appId: r.appId || "",
+    secret: r.secret || "",
+    link: r.link || "",
+    fsStatus: r.fsStatus === "ok" ? "ok" : "idle",
+    fsResult: r.fsResult || "",
+    saved: !!r.saved,
+  };
 }
 
-export function IntegrationSettings({ onClose, showUsageCap = true, storageKey = S_LS_KEY }) {
+export function IntegrationSettings({
+  onClose,
+  showUsageCap = true,
+  storageKey = S_LS_KEY,
+  value,
+  onChange,
+  onSave,
+  onTest,
+  readiness,
+  masked,
+}) {
+  // ── State source ──────────────────────────────────────────────────────────
+  // Uncontrolled (default): own the config + self-persist to localStorage — the
+  // exact legacy behavior. Controlled: `value` is the source of truth and every
+  // mutation flows out through `onChange`; we never touch localStorage. The rest
+  // of the component reads `cfg` and writes via `update()`, so both modes share
+  // one code path.
+  const controlled = value !== undefined;
   const load = () => {
     try {
       return JSON.parse(localStorage.getItem(storageKey)) || {};
@@ -155,57 +200,9 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
       return {};
     }
   };
-  const boot = useRef(load()).current;
-
-  const [dsKey, setDsKey] = useState(boot.dsKey || "");
-  const [dsModel, setDsModel] = useState(boot.dsModel || "deepseek-chat");
-  const [capOn, setCapOn] = useState(!!boot.capOn);
-  const [cap, setCap] = useState(boot.cap || "200");
-  const [dsStatus, setDsStatus] = useState(boot.dsStatus === "ok" ? "ok" : "idle");
-  const [dsResult, setDsResult] = useState(boot.dsResult || "");
-
-  const [appId, setAppId] = useState(boot.appId || "");
-  const [secret, setSecret] = useState(boot.secret || "");
-  const [link, setLink] = useState(boot.link || "");
-  const [fsStatus, setFsStatus] = useState(boot.fsStatus === "ok" ? "ok" : "idle");
-  const [fsResult, setFsResult] = useState(boot.fsResult || "");
-
-  const [dirty, setDirty] = useState(false);
-  const [saved, setSaved] = useState(!!boot.saved);
-
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose && onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  const parsed = s_parseFeishu(link);
-  const dsConnected = dsStatus === "ok";
-  const fsConnected = fsStatus === "ok";
-  const readyCount = (dsConnected ? 1 : 0) + (fsConnected ? 1 : 0);
-  const allReady = dsConnected && fsConnected;
-
-  useEffect(() => {
-    const snap = {
-      dsKey,
-      dsModel,
-      capOn,
-      cap,
-      dsStatus,
-      dsResult,
-      appId,
-      secret,
-      link,
-      fsStatus,
-      fsResult,
-      saved,
-    };
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(snap));
-    } catch (e) {}
-  }, [
+  const [localCfg, setLocalCfg] = useState(() => (controlled ? S_DEFAULTS : s_normalize(load())));
+  const cfg = controlled ? { ...S_DEFAULTS, ...value } : localCfg;
+  const {
     dsKey,
     dsModel,
     capOn,
@@ -218,91 +215,178 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
     fsStatus,
     fsResult,
     saved,
-    storageKey,
-  ]);
+  } = cfg;
+  // Always-fresh handle so async flows (test/save) read the latest config even
+  // after the controlling parent has re-rendered mid-await.
+  const cfgRef = useRef(cfg);
+  cfgRef.current = cfg;
 
-  const touch = () => {
+  const update = (partial) => {
+    if (controlled) {
+      if (onChange) onChange({ ...cfgRef.current, ...partial });
+    } else setLocalCfg((c) => ({ ...c, ...partial }));
+  };
+
+  const [dirty, setDirty] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [dsKeyEdited, setDsKeyEdited] = useState(false);
+  const [secretEdited, setSecretEdited] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose && onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  // Self-persist ONLY when uncontrolled. Controlled callers own storage.
+  useEffect(() => {
+    if (controlled) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(localCfg));
+    } catch (e) {}
+  }, [controlled, localCfg, storageKey]);
+
+  const parsed = s_parseFeishu(link);
+  // Readiness: external override (`readiness.deepseek` / `.feishu`) wins over the
+  // internal test status — lets a backend report "already connected" without a
+  // fresh in-app test. The pill still shows live testing/error transitions.
+  const dsConnected = readiness ? !!readiness.deepseek : dsStatus === "ok";
+  const fsConnected = readiness ? !!readiness.feishu : fsStatus === "ok";
+  const dsPill =
+    dsStatus === "testing" || dsStatus === "error" ? dsStatus : dsConnected ? "ok" : "idle";
+  const fsPill =
+    fsStatus === "testing" || fsStatus === "error" ? fsStatus : fsConnected ? "ok" : "idle";
+  const readyCount = (dsConnected ? 1 : 0) + (fsConnected ? 1 : 0);
+  const allReady = dsConnected && fsConnected;
+
+  // Masked echo: a stored secret exists server-side but is never sent back. While
+  // the field is untouched we show a masked placeholder, keep the value empty, and
+  // count it as "present" for test/validation — so the mask is never re-submitted.
+  const maskedDs = !!(masked && masked.deepseek) && !dsKeyEdited;
+  const maskedFs = !!(masked && masked.feishu) && !secretEdited;
+
+  const setCfg = (partial) => {
+    update({ ...partial, saved: false });
     setDirty(true);
-    setSaved(false);
   };
-  const editDs = (setter) => (v) => {
-    setter(v);
-    if (dsStatus !== "idle") {
-      setDsStatus("idle");
-      setDsResult("");
+  const editDs = (key) => (v) => {
+    const patch = { [key]: v, saved: false };
+    if (cfgRef.current.dsStatus !== "idle") {
+      patch.dsStatus = "idle";
+      patch.dsResult = "";
     }
-    touch();
+    update(patch);
+    setDirty(true);
   };
-  const editFs = (setter) => (v) => {
-    setter(v);
-    if (fsStatus !== "idle") {
-      setFsStatus("idle");
-      setFsResult("");
+  const editFs = (key) => (v) => {
+    const patch = { [key]: v, saved: false };
+    if (cfgRef.current.fsStatus !== "idle") {
+      patch.fsStatus = "idle";
+      patch.fsResult = "";
     }
-    touch();
+    update(patch);
+    setDirty(true);
+  };
+  const editDsKey = (v) => {
+    if (!dsKeyEdited) setDsKeyEdited(true);
+    editDs("dsKey")(v);
+  };
+  const editSecret = (v) => {
+    if (!secretEdited) setSecretEdited(true);
+    editFs("secret")(v);
   };
 
-  const testDeepSeek = async () => {
-    setDsStatus("testing");
-    setDsResult("");
-    await s_sleep(1300);
-    const k = dsKey.trim();
-    if (k.startsWith("sk-") && k.length >= 20) {
-      setDsStatus("ok");
-      setDsResult(`连接正常 · 延迟 0.4s · ${dsModel}`);
+  const setTest = (which, status, result, finalize) => {
+    const patch =
+      which === "deepseek"
+        ? { dsStatus: status, dsResult: result }
+        : { fsStatus: status, fsResult: result };
+    if (finalize) patch.saved = false;
+    update(patch);
+    if (finalize) setDirty(true);
+  };
+
+  // Built-in mock probe — used only when no `onTest` is wired.
+  const builtinTest = async (which) => {
+    if (which === "deepseek") {
+      setTest("deepseek", "testing", "", false);
+      await s_sleep(1300);
+      const k = cfgRef.current.dsKey.trim();
+      if (k.startsWith("sk-") && k.length >= 20)
+        setTest("deepseek", "ok", `连接正常 · 延迟 0.4s · ${cfgRef.current.dsModel}`, true);
+      else
+        setTest(
+          "deepseek",
+          "error",
+          k ? "密钥无效或额度不足，请核对后重试" : "请先填写 API Key",
+          true,
+        );
     } else {
-      setDsStatus("error");
-      setDsResult(k ? "密钥无效或额度不足，请核对后重试" : "请先填写 API Key");
+      setTest("feishu", "testing", "", false);
+      await s_sleep(1500);
+      const c = cfgRef.current;
+      const p = s_parseFeishu(c.link);
+      if (!c.appId.trim() || !c.secret.trim())
+        return setTest("feishu", "error", "缺少 App ID 或 App Secret", true);
+      if (!p) return setTest("feishu", "error", "无法识别多维表格链接，请粘贴完整 URL", true);
+      if (!p.table) return setTest("feishu", "error", "链接缺少数据表 (table) 参数", true);
+      setTest("feishu", "ok", "已连接 ·「报名登记表」· 检测到 6 个字段", true);
     }
-    touch();
   };
 
-  const testFeishu = async () => {
-    setFsStatus("testing");
-    setFsResult("");
-    await s_sleep(1500);
-    if (!appId.trim() || !secret.trim()) {
-      setFsStatus("error");
-      setFsResult("缺少 App ID 或 App Secret");
-      touch();
+  // `onTest(which)` → Promise<{ ok, message }> drives StatusPill + TestRow.
+  const runTest = async (which) => {
+    if (onTest) {
+      setTest(which, "testing", "", false);
+      try {
+        const res = await onTest(which);
+        const ok = !!(res && res.ok);
+        setTest(
+          which,
+          ok ? "ok" : "error",
+          (res && res.message) || (ok ? "连接正常" : "连接失败"),
+          true,
+        );
+      } catch (e) {
+        setTest(which, "error", (e && e.message) || "测试失败", true);
+      }
       return;
     }
-    if (!parsed) {
-      setFsStatus("error");
-      setFsResult("无法识别多维表格链接，请粘贴完整 URL");
-      touch();
-      return;
-    }
-    if (!parsed.table) {
-      setFsStatus("error");
-      setFsResult("链接缺少数据表 (table) 参数");
-      touch();
-      return;
-    }
-    setFsStatus("ok");
-    setFsResult("已连接 ·「报名登记表」· 检测到 6 个字段");
-    touch();
+    builtinTest(which);
   };
 
-  const onSave = () => {
-    setSaved(true);
+  const afterSaved = () => {
     setDirty(false);
+    setDsKeyEdited(false);
+    setSecretEdited(false);
+  };
+  // `onSave(value)` → Promise. Save disables + spins while pending; resolve marks
+  // saved (and re-masks secrets), reject leaves the form dirty for a retry.
+  const doSave = async () => {
+    if (onSave) {
+      setSaving(true);
+      try {
+        await onSave(cfgRef.current);
+        update({ saved: true });
+        afterSaved();
+      } catch (e) {
+        /* keep dirty so the user can retry */
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      update({ saved: true });
+      afterSaved();
+    }
   };
   const onDiscard = () => {
-    const b = load();
-    setDsKey(b.dsKey || "");
-    setDsModel(b.dsModel || "deepseek-chat");
-    setCapOn(!!b.capOn);
-    setCap(b.cap || "200");
-    setDsStatus(b.dsStatus === "ok" ? "ok" : "idle");
-    setDsResult(b.dsResult || "");
-    setAppId(b.appId || "");
-    setSecret(b.secret || "");
-    setLink(b.link || "");
-    setFsStatus(b.fsStatus === "ok" ? "ok" : "idle");
-    setFsResult(b.fsResult || "");
-    setSaved(!!b.saved);
+    setDsKeyEdited(false);
+    setSecretEdited(false);
     setDirty(false);
+    if (controlled) return; // controlled callers own revert
+    setLocalCfg(s_normalize(load()));
   };
 
   return (
@@ -359,8 +443,7 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
               {/* ── Card 1 · DeepSeek ── */}
               <section
                 className={
-                  "s-card" +
-                  (dsStatus === "ok" ? " is-ok" : dsStatus === "error" ? " is-error" : "")
+                  "s-card" + (dsPill === "ok" ? " is-ok" : dsPill === "error" ? " is-error" : "")
                 }
               >
                 <div className="s-card__head">
@@ -370,7 +453,7 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
                     </div>
                     <span className="ax-label s-card__eyebrow">对话引擎 · LLM</span>
                     <span className="s-card__status">
-                      <StatusPill status={dsStatus} />
+                      <StatusPill status={dsPill} />
                     </span>
                   </div>
                   <h2 className="s-card__title">DeepSeek</h2>
@@ -383,9 +466,16 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
                   <SecretField
                     label="API KEY"
                     value={dsKey}
-                    onChange={editDs(setDsKey)}
-                    placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
-                    error={dsStatus === "error" && !dsKey.trim() ? "此项必填" : undefined}
+                    onChange={editDsKey}
+                    placeholder={
+                      maskedDs
+                        ? "已保存 ········  ·  留空则保持不变"
+                        : "sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+                    }
+                    hint={maskedDs ? "已存密钥 · 留空表示不修改，输入新值即覆盖" : undefined}
+                    error={
+                      !maskedDs && dsStatus === "error" && !dsKey.trim() ? "此项必填" : undefined
+                    }
                   />
 
                   <div className="s-lock">
@@ -401,7 +491,7 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
                       <label className="s-field__label ax-label">对话模型</label>
                       <Select
                         value={dsModel}
-                        onChange={(e) => editDs(setDsModel)(e.target.value)}
+                        onChange={(e) => editDs("dsModel")(e.target.value)}
                         options={[
                           { value: "deepseek-chat", label: "deepseek-chat · 通用 · 快" },
                           { value: "deepseek-reasoner", label: "deepseek-reasoner · 深度推理" },
@@ -424,10 +514,7 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
                         <Switch
                           label="启用每月用量上限"
                           checked={capOn}
-                          onChange={(e) => {
-                            setCapOn(e.target.checked);
-                            touch();
-                          }}
+                          onChange={(e) => setCfg({ capOn: e.target.checked })}
                         />
                         <div className="s-cap__field" style={{ display: capOn ? "flex" : "none" }}>
                           <input
@@ -435,10 +522,7 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
                             type="text"
                             inputMode="numeric"
                             value={cap}
-                            onChange={(e) => {
-                              setCap(e.target.value.replace(/[^0-9]/g, ""));
-                              touch();
-                            }}
+                            onChange={(e) => setCfg({ cap: e.target.value.replace(/[^0-9]/g, "") })}
                             aria-label="每月上限（元）"
                           />
                           <span className="s-field__hint" style={{ margin: 0 }}>
@@ -471,8 +555,8 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
                 <TestRow
                   status={dsStatus}
                   result={dsResult}
-                  onTest={testDeepSeek}
-                  disabled={!dsKey.trim()}
+                  onTest={() => runTest("deepseek")}
+                  disabled={!dsKey.trim() && !maskedDs}
                   idleHint="填写密钥后测试连通性"
                 />
               </section>
@@ -480,8 +564,7 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
               {/* ── Card 2 · Feishu Bitable ── */}
               <section
                 className={
-                  "s-card" +
-                  (fsStatus === "ok" ? " is-ok" : fsStatus === "error" ? " is-error" : "")
+                  "s-card" + (fsPill === "ok" ? " is-ok" : fsPill === "error" ? " is-error" : "")
                 }
               >
                 <div className="s-card__head">
@@ -491,7 +574,7 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
                     </div>
                     <span className="ax-label s-card__eyebrow">数据写入 · FEISHU BITABLE</span>
                     <span className="s-card__status">
-                      <StatusPill status={fsStatus} />
+                      <StatusPill status={fsPill} />
                     </span>
                   </div>
                   <h2 className="s-card__title">飞书多维表格</h2>
@@ -510,16 +593,18 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
                         value={appId}
                         spellCheck="false"
                         placeholder="cli_xxxxxxxxxxxx"
-                        onChange={(e) => editFs(setAppId)(e.target.value)}
+                        onChange={(e) => editFs("appId")(e.target.value)}
                       />
                       <p className="s-field__hint">应用标识，可公开。</p>
                     </div>
                     <SecretField
                       label="App Secret"
                       value={secret}
-                      onChange={editFs(setSecret)}
-                      placeholder="••••••••••••••••"
-                      hint="应用密钥，加密存储。"
+                      onChange={editSecret}
+                      placeholder={
+                        maskedFs ? "已保存 ········  ·  留空则保持不变" : "••••••••••••••••"
+                      }
+                      hint={maskedFs ? "已存密钥 · 留空表示不修改" : "应用密钥，加密存储。"}
                     />
                   </div>
 
@@ -531,7 +616,7 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
                       value={link}
                       spellCheck="false"
                       placeholder="https://your-team.feishu.cn/base/bascn…?table=tbl…"
-                      onChange={(e) => editFs(setLink)(e.target.value)}
+                      onChange={(e) => editFs("link")(e.target.value)}
                     />
                     <p className="s-field__hint">
                       在多维表格右上角「分享」中复制链接粘贴即可，App Token 与数据表会自动识别。
@@ -632,8 +717,8 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
                 <TestRow
                   status={fsStatus}
                   result={fsResult}
-                  onTest={testFeishu}
-                  disabled={!appId.trim() || !secret.trim() || !parsed}
+                  onTest={() => runTest("feishu")}
+                  disabled={!appId.trim() || (!secret.trim() && !maskedFs) || !parsed}
                   idleHint="填写凭证与链接后测试写入权限"
                 />
               </section>
@@ -668,9 +753,10 @@ export function IntegrationSettings({ onClose, showUsageCap = true, storageKey =
               <Button
                 variant="primary"
                 size="md"
-                icon={<Icon name="save" size={14} />}
-                disabled={!allReady || !dirty}
-                onClick={onSave}
+                icon={saving ? <Spinner size="sm" /> : <Icon name="save" size={14} />}
+                disabled={!allReady || !dirty || saving}
+                aria-busy={saving || undefined}
+                onClick={doSave}
               >
                 保存配置
               </Button>

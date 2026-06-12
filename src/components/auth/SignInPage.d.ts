@@ -4,7 +4,9 @@
  * are shared; only fields, copy, and footer differ. The built-in footer link
  * flips mode and fires onModeChange (wire it to your router to swap the URL).
  * Light built-in validation (email format, password length, confirm match).
- * For a modal instead, use AuthDialog. Brand panel hides < 860px.
+ * Pass `error` to surface a backend error above the submit button and
+ * `submitting` to drive the async busy state. For a modal instead, use AuthDialog.
+ * Brand panel hides < 860px.
  */
 export interface SignInPageCopy {
   title?: string;
@@ -65,5 +67,20 @@ export interface SignInPageProps {
   footer?: React.ReactNode;
   /** Show the left brand panel. @default true */
   showBrandPanel?: boolean;
+  /**
+   * Server-side error to show in a danger banner directly above the submit
+   * button (e.g. 409 email taken, 401 bad credentials, 400 weak password).
+   * Omit/falsy = nothing shown. The component owns its CLIENT validation errors
+   * and clears them on input/mode change; this backend error is caller-owned —
+   * clear it yourself (typically inside onSubmit before the request, and on
+   * onModeChange / onEmailChange / onPasswordChange).
+   */
+  error?: React.ReactNode;
+  /**
+   * Submit-in-flight flag for an async onSubmit. When true the submit button is
+   * disabled and shows a spinner, and re-submits are blocked — prevents double
+   * submission. @default false
+   */
+  submitting?: boolean;
 }
 export declare function SignInPage(props: SignInPageProps): JSX.Element;
