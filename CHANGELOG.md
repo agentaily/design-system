@@ -1,5 +1,16 @@
 # @agentaily/design-system
 
+## 0.3.0
+
+### Minor Changes
+
+- [#4](https://github.com/agentaily/design-system/pull/4) [`636a97c`](https://github.com/agentaily/design-system/commit/636a97c145481663f335b261edf0e9b818c4565d) Thanks [@yarnovo](https://github.com/yarnovo)! - Sync the latest Claude Design handoff (`6Ovub8OJ`): light-first theme flip, 16 new components, and a `Queue.useQueue` hook.
+
+  - **BREAKING (visual): default theme flipped dark → light.** `:root` is now the `paper` (light) scale; the `ink` (dark) scale moved to `[data-theme="dark"]`. Consumers who relied on the dark default must add `data-theme="dark"` to opt back in. Shadow tokens and per-component theme overrides flipped to match.
+  - **New layout tokens** `--topbar-h` (52px) and `--bar-h` (48px) so app/pane bars align.
+  - **16 new components across 3 new categories + existing ones** (112 total): `auth/` (`AuthDialog` + `AuthDialog.useAuth`, `AccountControl`, `SignInPage`), `settings/` (`IntegrationSettings`, `SecretField`, `StatusPill`, `TestRow`, `HelpSteps`), `review/` (`MarkupLayer`), plus `layout/` full-page shells (`AppShell`, `DesignerShell`, `DocsLayout`, `SettingsPage`), `chat/ConversationThread`, and `utilities/` (`Icon`, `BrandMark`).
+  - **`Queue.useQueue`** — headless keep-sending-while-busy buffer, exposed as a static on `Queue` (pairs with `ConversationThread`).
+
 ## 0.2.0
 
 ### Minor Changes
