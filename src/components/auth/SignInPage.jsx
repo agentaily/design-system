@@ -4,6 +4,7 @@ import { Button } from "../buttons/Button.jsx";
 import { Icon } from "../utilities/Icon.jsx";
 import { BrandMark } from "../utilities/BrandMark.jsx";
 import { RotatingTagline } from "../utilities/RotatingTagline.jsx";
+import { Spinner } from "../feedback/Spinner.jsx";
 
 // SignInPage — full-page auth: a split brand panel (dot-grid + quote) beside a
 // centered card. One component, two modes (signin / signup) — the brand panel,
@@ -30,6 +31,9 @@ const AX_SIGNIN_CSS = `
 .ax-signin__link { font-size: 12px; color: var(--text-muted); text-decoration: none; background: none; border: none; cursor: pointer; font-family: inherit; }
 .ax-signin__link:hover { color: var(--text-body); }
 .ax-signin__submit { margin-top: 22px; }
+.ax-signin__error { display: flex; align-items: flex-start; gap: 9px; margin-top: 22px; padding: 10px 12px; border: 1px solid var(--danger); border-radius: var(--radius-2); background: var(--danger-dim); color: var(--danger); font-size: var(--text-sm); line-height: var(--leading-snug); }
+.ax-signin__error svg { flex: none; margin-top: 1px; }
+.ax-signin__submit .ax-spinner { border-top-color: var(--accent-fg); }
 .ax-signin__or { display: flex; align-items: center; gap: 12px; margin: 22px 0; }
 .ax-signin__or::before, .ax-signin__or::after { content: ""; flex: 1; height: 1px; background: var(--border-default); }
 .ax-signin__or span { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text-faint); }
@@ -113,6 +117,8 @@ export function SignInPage({
   terms,
   footer,
   showBrandPanel = true,
+  error,
+  submitting = false,
 }) {
   const [modeI, setModeI] = useState(defaultMode);
   const m = mode !== undefined ? mode : modeI;
@@ -169,6 +175,7 @@ export function SignInPage({
 
   const submit = (ev) => {
     ev.preventDefault();
+    if (submitting) return;
     const e = validate();
     setErrs(e);
     if (Object.keys(e).some((k) => e[k])) return;
@@ -248,8 +255,22 @@ export function SignInPage({
             ) : null}
           </div>
 
+          {error ? (
+            <div className="ax-signin__error" role="alert">
+              <Icon name="warn" size={15} />
+              <span>{error}</span>
+            </div>
+          ) : null}
+
           <div className="ax-signin__submit">
-            <Button variant="primary" full type="submit" icon={<Icon name="arrow" size={15} />}>
+            <Button
+              variant="primary"
+              full
+              type="submit"
+              disabled={submitting}
+              aria-busy={submitting || undefined}
+              icon={submitting ? <Spinner size="sm" /> : <Icon name="arrow" size={15} />}
+            >
               {c.submit}
             </Button>
           </div>

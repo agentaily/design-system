@@ -48,6 +48,19 @@ export const CustomTagline = {
   ),
 };
 
+// `error` surfaces a backend failure (409 / 401 / 400 …) in a danger banner
+// directly above the submit button. It's caller-owned — clear it on mode/input
+// change; the component only owns its own client-side validation errors.
+export const WithBackendError = {
+  render: () => <Demo defaultMode="signup" error="该邮箱已注册" />,
+};
+
+// `submitting` drives the async busy state: while an async onSubmit is in flight
+// the submit button disables, shows a spinner, and blocks double-submit.
+export const Submitting = {
+  render: () => <Demo defaultMode="signin" submitting />,
+};
+
 // Below the 860px breakpoint the brand panel collapses; the card leads with a
 // compact BrandMark + tagline, left-aligned. Storybook constrains the iframe to
 // a phone width so the responsive layout renders.
