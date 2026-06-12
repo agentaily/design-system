@@ -1,8 +1,6 @@
 The agentaily mark + optional wordmark. Monochrome `currentColor` — inherits and inverts with the theme.
 
 ```jsx
-const { BrandMark } = window.AxiomDesignSystem_7fc962;
-
 <BrandMark size={20} />                    // mark only
 <BrandMark size={18} wordmark />           // mark + "agentaily" + blinking cursor
 <BrandMark size={16} wordmark cursor={false} />

@@ -1,8 +1,6 @@
 Two-pane AI-designer frame — chat on the left, live preview on the right, draggable divider, phone-collapsing. Pure frame; you supply the panes and mount overlays yourself.
 
 ```jsx
-const { DesignerShell, Composer, MarkupLayer, AccountControl, Button, Icon } = window.AxiomDesignSystem_7fc962;
-
 <DesignerShell
   crumb="脚本设计器"
   actions={<>

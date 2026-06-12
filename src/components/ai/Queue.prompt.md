@@ -1,13 +1,8 @@
 Queued prompts — running item highlighted, pending removable. The display, plus a headless driver hook (`Queue.useQueue`) for "keep typing & sending while the agent is busy; buffered prompts flush together".
 
 ```jsx
-const { Queue, Composer } = window.AxiomDesignSystem_7fc962;
-
 // display only:
-<Queue
-  items={[{ text: "Summarize PR", status: "running" }, "Write changelog"]}
-  onRemove={remove}
-/>;
+<Queue items={[{ text: "Summarize PR", status: "running" }, "Write changelog"]} onRemove={remove} />
 ```
 
 ### Queue.useQueue — continuous send + buffer

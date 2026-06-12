@@ -1,8 +1,6 @@
 Three-pane docs frame — section nav · article · on-this-page TOC.
 
 ```jsx
-const { DocsLayout, Badge } = window.AxiomDesignSystem_7fc962;
-
 <DocsLayout
   sections={[
     { title: "Get started", items: ["Introduction", "Quickstart"] },
@@ -17,7 +15,7 @@ const { DocsLayout, Badge } = window.AxiomDesignSystem_7fc962;
   <Badge variant="outline">GUIDE</Badge>
   <h1>Page title</h1>
   <p>Your article body…</p>
-</DocsLayout>;
+</DocsLayout>
 ```
 
 Nav/TOC are controlled (`activeItem`/`onNavigate`, `activeToc`/`onTocChange`) or self-manage if omitted. **Responsive:** the TOC pane hides below 1080px; below 760px a top bar with a hamburger appears and the section nav becomes an off-canvas drawer (tap a item or the scrim to close).

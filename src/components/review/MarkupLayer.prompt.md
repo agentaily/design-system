@@ -1,8 +1,6 @@
 "Point at what to change" review overlay. The user hovers a real element, clicks it, and types a change request that's sent to chat with the element's identity attached — so they locate precisely instead of describing in words.
 
 ```jsx
-const { MarkupLayer } = window.AxiomDesignSystem_7fc962;
-
 // 1) tag the elements that should be targetable:
 <h1 data-mk-label="标题" data-mk-kind="文本">…</h1>
 <button data-mk-label="提交按钮" data-mk-kind="按钮">…</button>

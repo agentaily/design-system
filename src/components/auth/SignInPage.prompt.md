@@ -1,8 +1,6 @@
 Full-page auth — split brand panel + centered card. **One component, two modes** (`signin` / `signup`); the brand panel, SSO, and chrome are shared, only fields/copy/footer differ. The built-in footer link flips mode and fires `onModeChange` — the full-page sibling of `AuthDialog`.
 
 ```jsx
-const { SignInPage } = window.AxiomDesignSystem_7fc962;
-
 // Uncontrolled — the footer "Create one" / "Sign in" link flips mode internally:
 <SignInPage onSubmit={({ mode, email, password }) => doAuth(mode, email, password)} onForgot={...} onSSO={...} />
 

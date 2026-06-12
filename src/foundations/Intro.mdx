@@ -9,7 +9,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 ## 核心规则
 
 - **单色优先。** 没有色相意义上的 accent —— 主按钮在暗色下是白底黑字,亮色下反转。绿/黄/红只作状态,从不装饰。无渐变。
-- **双主题。** 暗色 ink 是默认(`:root`),亮色 paper 走 `[data-theme="light"]`。用右上角工具栏切换。
+- **双主题。** 亮色 paper 是默认(`:root`),暗色 ink 走 `[data-theme="dark"]`。用右上角工具栏切换。
 - **字体。** Space Grotesk(display + UI)+ JetBrains Mono(代码、时间戳、标签)。CJK 回退系统字体。
 - **硬边角。** 2px chips / 4px 按钮输入 / 8px 卡片对话框。默认头像是方的。
 - **层级靠 1px hairline 边框,不靠阴影。** 阴影只给浮层(菜单、对话框)。

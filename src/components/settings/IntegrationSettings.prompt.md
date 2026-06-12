@@ -1,8 +1,6 @@
 Fullscreen modal for connecting the two services an Agentaily designer needs: a DeepSeek key and a Feishu Bitable. Mount it as an overlay over the app.
 
 ```jsx
-const { IntegrationSettings } = window.AxiomDesignSystem_7fc962;
-
 {
   settingsOpen && <IntegrationSettings onClose={() => setSettingsOpen(false)} />;
 }

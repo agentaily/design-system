@@ -1,9 +1,6 @@
 Pure-render chat surface — header, empty state w/ hint chips, auto-scrolling thread, pinned Composer. **State lives outside the component:** the caller holds the queue (`Queue.useQueue`) and injects it as `controller`.
 
 ```jsx
-const { ConversationThread, Queue, Message, Reasoning, ToolCall, Suggestions } =
-  window.AxiomDesignSystem_7fc962;
-
 function Designer() {
   const [messages, setMessages] = React.useState([]);
   const [draft, setDraft] = React.useState("");

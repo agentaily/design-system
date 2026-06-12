@@ -1,7 +1,6 @@
 Top-bar account affordance — pairs with `AuthDialog`.
 
 ```jsx
-const { AccountControl, AuthDialog } = window.AxiomDesignSystem_7fc962;
 const { user, signOut } = AuthDialog.useAuth();
 
 <AccountControl

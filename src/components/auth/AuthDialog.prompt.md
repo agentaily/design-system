@@ -1,8 +1,6 @@
 Sign in / register modal + a persisted session hook. The hook lives on the component (`AuthDialog.useAuth`), mirroring `Form.useForm`.
 
 ```jsx
-const { AuthDialog } = window.AxiomDesignSystem_7fc962;
-
 function App() {
   const { user, signIn, signOut } = AuthDialog.useAuth();
   const [open, setOpen] = React.useState(false);

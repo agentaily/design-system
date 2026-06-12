@@ -1,8 +1,6 @@
 Single Lucide-geometry icon set for product surfaces — replaces ad-hoc inline icon maps. Stroke 2, round caps, `currentColor`, rendered at 14–20px.
 
 ```jsx
-const { Icon } = window.AxiomDesignSystem_7fc962;
-
 <Icon name="send" size={16} />
 <Icon name="settings" size={18} />
 <Icon name="check" size={15} style={{ color: "var(--ok)" }} />

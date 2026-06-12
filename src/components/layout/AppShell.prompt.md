@@ -1,8 +1,6 @@
 Standard product frame — sidebar + topbar + content. Every region is a slot.
 
 ```jsx
-const { AppShell, AccountControl, Button, Icon } = window.AxiomDesignSystem_7fc962;
-
 <AppShell
   nav={[
     { id: "overview", label: "Overview", icon: <Icon name="layout" size={16} /> },
