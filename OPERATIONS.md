@@ -98,15 +98,15 @@ import { Button, Composer } from "@agentaily/design-system";
 
 ## 4. CI/CD 工作流
 
-| 文件                                                                   | 触发               | 作用                                             | 关键权限                                           |
-| ---------------------------------------------------------------------- | ------------------ | ------------------------------------------------ | -------------------------------------------------- |
-| [`.github/workflows/storybook.yml`](./.github/workflows/storybook.yml) | push `main` / 手动 | 构建并部署 Storybook 到 GitHub Pages             | `pages: write`, `id-token: write`                  |
-| [`.github/workflows/release.yml`](./.github/workflows/release.yml)     | push `main`        | Changesets:开 Version PR 或发布 npm + 建 Release | `contents/pull-requests: write`, `id-token: write` |
+| 文件                                                                   | 触发               | 作用                                                    | 关键权限                                           |
+| ---------------------------------------------------------------------- | ------------------ | ------------------------------------------------------- | -------------------------------------------------- |
+| [`.github/workflows/storybook.yml`](./.github/workflows/storybook.yml) | push `main` / 手动 | 构建并部署 Storybook 到 GitHub Pages                    | `pages: write`, `id-token: write`                  |
+| [`.github/workflows/release.yml`](./.github/workflows/release.yml)     | push `main`        | Changesets:开 Version PR(自动合)或发布 npm + 建 Release | `contents/pull-requests: write`, `id-token: write` |
 
-**密钥需求:无。**
+**密钥需求:两个 org 级 secret(复用组织发版 App `agentaily-release-bot`,App ID `4034001`)。**
 
-- npm 发布走 **OIDC trusted publishing**,仓库不存任何 `NPM_TOKEN`。
-- `GITHUB_TOKEN` 由 Actions 自动注入。
+- `RELEASE_BOT_APP_ID` / `RELEASE_BOT_PRIVATE_KEY` —— Version PR 由这个 **App 身份**开,它的 CI 才会自动跑;`GITHUB_TOKEN` 开的 PR 不触发新 workflow,会卡在「1 workflow awaiting approval」永远合不了。开完 PR 即挂 `--auto`,CI 绿了自己 squash 合。两个 secret 是 org 级 `selected` 可见性 —— 接新仓要把仓库勾进这两个 secret 的可见列表 + App 安装,并在仓库开 `Allow auto-merge`。
+- npm 发布仍走 **OIDC trusted publishing**,仓库不存任何 `NPM_TOKEN`。
 
 ---
 
@@ -132,12 +132,12 @@ import { Button, Composer } from "@agentaily/design-system";
 ```
 改代码 → npm run changeset(选 patch/minor/major + 写一行摘要)→ 连同代码提交并开 PR
    → 合并到 main
-   → 机器人自动开「Version Packages」PR(bump version + 写 CHANGELOG.md)
-   → 合并那个 PR
+   → 机器人(agentaily-release-bot)自动开「Version Packages」PR(bump version + 写 CHANGELOG.md)
+   → 该 PR 的 CI 自动跑,绿了 **auto-merge 自动合**(无需人点)
    → release.yml 自动:OIDC 发布 npm(带 provenance)+ 创建 GitHub Release
 ```
 
-维护者**不手动**改版本号、不手动 `npm publish`。只需:加 changeset + 合并两个 PR。
+维护者**不手动**改版本号、不手动 `npm publish`、不手动合 Version PR。只需:加 changeset + 合并那个 **feature PR**,Version PR 会自动开、自动跑 CI、自动合、自动发布。
 
 `npm run changeset` 会在 `.changeset/` 落一个 markdown,描述本次改动与 bump 级别,务必随代码一起提交。
 
