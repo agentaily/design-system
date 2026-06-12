@@ -7,7 +7,7 @@ export default {
   parameters: { layout: "fullscreen" },
 };
 
-function Demo({ defaultMode }) {
+function Demo({ defaultMode, ...props }) {
   const [mode, setMode] = React.useState(defaultMode ?? "signin");
   return (
     <div style={{ height: "100vh" }}>
@@ -17,6 +17,7 @@ function Demo({ defaultMode }) {
         onSubmit={() => {}}
         onForgot={() => {}}
         onSSO={() => {}}
+        {...props}
       />
     </div>
   );
@@ -32,4 +33,30 @@ export const NoBrandPanel = {
       <SignInPage showBrandPanel={false} onSubmit={() => {}} />
     </div>
   ),
+};
+
+// The brand-panel tagline is a RotatingTagline; override its phrases via `tagline`.
+export const CustomTagline = {
+  render: () => (
+    <Demo
+      defaultMode="signin"
+      tagline={{
+        prefix: "Chat to ",
+        phrases: ["build anything", "ship anything", "learn anything"],
+      }}
+    />
+  ),
+};
+
+// Below the 860px breakpoint the brand panel collapses; the card leads with a
+// compact BrandMark + tagline, left-aligned. Storybook constrains the iframe to
+// a phone width so the responsive layout renders.
+export const Mobile = {
+  parameters: {
+    viewport: {
+      viewports: { phone: { name: "Phone 390×760", styles: { width: "390px", height: "760px" } } },
+      defaultViewport: "phone",
+    },
+  },
+  render: () => <Demo defaultMode="signin" />,
 };

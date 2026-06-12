@@ -15,6 +15,21 @@ export interface SignInPageCopy {
   /** Footer link label that flips mode, e.g. "Create one" */
   switchCta?: string;
 }
+/** Shared, non-mode-specific strings. All optional — merged over the English defaults. */
+export interface SignInPageSharedCopy {
+  /** Field labels + chrome: { email, password, confirm, forgot, or, sso }. */
+  labels?: { email?: string; password?: string; confirm?: string; forgot?: string; or?: string; sso?: string };
+  /** Input placeholders: { email, password, passwordNew, confirm }. */
+  placeholders?: { email?: string; password?: string; passwordNew?: string; confirm?: string };
+  /** Validation messages: { emailRequired, emailInvalid, passwordRequired, passwordShort, confirmRequired, confirmMismatch }. */
+  errors?: {
+    emailRequired?: string; emailInvalid?: string;
+    passwordRequired?: string; passwordShort?: string;
+    confirmRequired?: string; confirmMismatch?: string;
+  };
+  /** Default signup terms line (string). Overridden by the `terms` prop if passed. */
+  terms?: React.ReactNode;
+}
 export interface SignInPageProps {
   /** Controlled mode. Omit for uncontrolled (uses defaultMode). */
   mode?: "signin" | "signup";
@@ -24,8 +39,14 @@ export interface SignInPageProps {
   onModeChange?: (mode: "signin" | "signup") => void;
   /** Brand-panel lockup. @default <BrandMark wordmark /> (blinking cursor) */
   brand?: React.ReactNode;
-  /** Per-mode copy overrides, merged over defaults: { signin?, signup? }. */
-  copy?: { signin?: SignInPageCopy; signup?: SignInPageCopy };
+  /**
+   * All user-facing strings, deep-merged over the English defaults. Per-mode
+   * copy under `signin`/`signup`; shared labels, placeholders, errors, and the
+   * terms line at the top level. Pass a full zh-CN object to localize.
+   */
+  copy?: { signin?: SignInPageCopy; signup?: SignInPageCopy } & SignInPageSharedCopy;
+  /** Props forwarded to the brand-panel RotatingTagline (prefix, phrases, flowDuration…). @default { breakAfterPrefix: true } */
+  tagline?: Record<string, unknown>;
   email?: string;
   password?: string;
   onEmailChange?: (value: string) => void;
@@ -34,7 +55,7 @@ export interface SignInPageProps {
   onSubmit?: (values: { mode: "signin" | "signup"; email: string; password: string }) => void;
   /** Show + handle the "Forgot?" link (signin mode only). */
   onForgot?: () => void;
-  /** @default "Continue with SSO" */
+  /** SSO button label. Overrides copy.labels.sso. @default "Continue with SSO" */
   ssoLabel?: string;
   /** Show + handle the SSO button (hidden when omitted). */
   onSSO?: () => void;
