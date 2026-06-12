@@ -7,11 +7,11 @@ const AX_SKELETON_CSS = `
 }
 .ax-skeleton::after {
   content: ""; position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent, var(--bg-3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
   transform: translateX(-100%);
   animation: ax-shimmer 1.4s var(--ease-out) infinite;
 }
-[data-theme="light"] .ax-skeleton::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); }
+[data-theme="dark"] .ax-skeleton::after { background: linear-gradient(90deg, transparent, var(--bg-3), transparent); }
 .ax-skeleton--text { height: 0.7em; margin: 0.2em 0; }
 .ax-skeleton--circle { border-radius: var(--radius-2); }
 @keyframes ax-shimmer { 100% { transform: translateX(100%); } }
@@ -25,7 +25,15 @@ if (typeof document !== "undefined" && !document.getElementById("ax-skeleton-css
   document.head.appendChild(s);
 }
 
-export function Skeleton({ variant = "block", width, height, lines = 1, className = "", style = {}, ...rest }) {
+export function Skeleton({
+  variant = "block",
+  width,
+  height,
+  lines = 1,
+  className = "",
+  style = {},
+  ...rest
+}) {
   if (variant === "text" && lines > 1) {
     return (
       <div className={className} {...rest}>
@@ -39,6 +47,13 @@ export function Skeleton({ variant = "block", width, height, lines = 1, classNam
       </div>
     );
   }
-  const cls = ["ax-skeleton", variant === "text" ? "ax-skeleton--text" : "", variant === "circle" ? "ax-skeleton--circle" : "", className].filter(Boolean).join(" ");
+  const cls = [
+    "ax-skeleton",
+    variant === "text" ? "ax-skeleton--text" : "",
+    variant === "circle" ? "ax-skeleton--circle" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
   return <span className={cls} style={{ width, height, ...style }} {...rest}></span>;
 }

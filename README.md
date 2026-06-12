@@ -1,6 +1,6 @@
 # agentaily design system
 
-Agentaily(AI chatbot)设计系统:116 个 React 组件 + Storybook,单色暗色优先。品牌一句话:**极客风格,简约,大气,科技感**。
+Agentaily(AI chatbot)设计系统:112 个 React 组件 + Storybook,单色亮色优先(暗色可切)。品牌一句话:**极客风格,简约,大气,科技感**。
 
 📖 **在线 Storybook:** https://agentaily.github.io/design-system/
 
@@ -28,7 +28,7 @@ npm run build:lib   # 产出 dist/:每组件一个 .js + index.d.ts + styles.css
 
 | 路径                                            | 内容                                      |
 | ----------------------------------------------- | ----------------------------------------- |
-| `dist/index.js`                                 | ESM 入口,re-export 全部 110 个组件符号    |
+| `dist/index.js`                                 | ESM 入口,re-export 全部 112 个组件符号    |
 | `dist/components/**/*.js`                       | 每个组件独立模块(含运行时 CSS 注入)       |
 | `dist/index.d.ts` + `dist/components/**/*.d.ts` | TypeScript 类型契约                       |
 | `dist/styles.css`                               | 内联好的 tokens + 字体,消费方 import 一次 |
@@ -64,12 +64,12 @@ ln -s "$PWD/skill" ~/.claude/skills/agentaily-design
 ## 结构
 
 ```
-.storybook/          Storybook 配置(深色默认 + 工具栏 ink/paper 双主题切换)
+.storybook/          Storybook 配置(浅色默认 + 工具栏 paper/ink 双主题切换)
 src/styles.css       全局入口,@import 所有 token
 src/tokens/          颜色 / 字体 / 间距 / 效果 / 基础母题 CSS 变量
 src/assets/logo/     品牌 mark SVG(白/黑)
 src/foundations/     Foundations stories(Intro / Colors / Typography / Spacing / Effects / Motifs)
-src/components/      11 个类别的组件源码 + stories
+src/components/      15 个类别的组件源码 + stories(含 auth / settings / review 产品域)
   <cat>/<Name>.jsx        组件(自包含,注入自身 CSS,只消费 token 变量)
   <cat>/<Name>.d.ts       props 契约
   <cat>/<Name>.prompt.md  用法说明
@@ -78,7 +78,7 @@ src/components/      11 个类别的组件源码 + stories
 
 ## 约定
 
-- 暗色 ink 是默认主题(`:root`);亮色 paper 走 `[data-theme="light"]`,用 Storybook 工具栏切换。
+- 亮色 paper 是默认主题(`:root`);暗色 ink 走 `[data-theme="dark"]`,用 Storybook 工具栏切换。
 - 单色反相 accent,无渐变;语义色(--ok/--warn/--danger)只作状态。
 - 圆角 2/4/8px;层级靠 1px hairline 边框;阴影只给浮层。
 - 文案:平实精确,无 emoji,具体数字即文案("0.4s"、"128k")。

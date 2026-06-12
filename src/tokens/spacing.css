@@ -21,5 +21,7 @@
   /* layout */
   --container-max: 1120px;
   --sidebar-w: 272px;
-  --thread-max: 760px;     /* chat reading column */
+  --thread-max: 760px; /* chat reading column */
+  --topbar-h: 52px; /* app top bar (brand / crumb / actions) */
+  --bar-h: 48px; /* pane sub-bar (chat header, preview header, toolbars) — keep panes aligned */
 }

@@ -5,9 +5,10 @@ const AX_CODE_CSS = `
   border: 1px solid var(--border-default);
   border-radius: var(--radius-2);
   overflow: hidden;
-  background: var(--bg-0);
+  background: var(--bg-1);
 }
-[data-theme="light"] .ax-code, .ax-code--paper { background: var(--bg-1); }
+[data-theme="dark"] .ax-code { background: var(--bg-0); }
+.ax-code--paper { background: var(--bg-1); }
 .ax-code__head {
   display: flex; align-items: center; justify-content: space-between;
   padding: 6px 12px;
@@ -45,7 +46,9 @@ export function CodeBlock({ code = "", lang = "text", className = "", ...rest })
   const copy = () => {
     try {
       navigator.clipboard && navigator.clipboard.writeText(code);
-    } catch (e) { /* noop */ }
+    } catch (e) {
+      /* noop */
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -57,7 +60,9 @@ export function CodeBlock({ code = "", lang = "text", className = "", ...rest })
           {copied ? "copied ✓" : "copy"}
         </button>
       </div>
-      <pre className="ax-code__pre"><code>{code}</code></pre>
+      <pre className="ax-code__pre">
+        <code>{code}</code>
+      </pre>
     </div>
   );
 }

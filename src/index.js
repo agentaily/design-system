@@ -18,6 +18,11 @@ export * from "./components/ai/Suggestion.jsx";
 export * from "./components/ai/Task.jsx";
 export * from "./components/ai/ToolCall.jsx";
 
+// auth
+export * from "./components/auth/AccountControl.jsx";
+export * from "./components/auth/AuthDialog.jsx";
+export * from "./components/auth/SignInPage.jsx";
+
 // buttons
 export * from "./components/buttons/Button.jsx";
 export * from "./components/buttons/ButtonGroup.jsx";
@@ -26,6 +31,7 @@ export * from "./components/buttons/IconButton.jsx";
 // chat
 export * from "./components/chat/CodeBlock.jsx";
 export * from "./components/chat/Composer.jsx";
+export * from "./components/chat/ConversationThread.jsx";
 export * from "./components/chat/Message.jsx";
 
 // code
@@ -61,6 +67,7 @@ export * from "./components/display/Pagination.jsx";
 export * from "./components/display/Progress.jsx";
 export * from "./components/display/Separator.jsx";
 export * from "./components/display/Skeleton.jsx";
+export * from "./components/display/StatusPill.jsx";
 export * from "./components/display/Table.jsx";
 export * from "./components/display/Tabs.jsx";
 export * from "./components/display/Typography.jsx";
@@ -84,6 +91,7 @@ export * from "./components/inputs/InputGroup.jsx";
 export * from "./components/inputs/InputOTP.jsx";
 export * from "./components/inputs/Label.jsx";
 export * from "./components/inputs/RadioGroup.jsx";
+export * from "./components/inputs/SecretField.jsx";
 export * from "./components/inputs/Select.jsx";
 export * from "./components/inputs/Slider.jsx";
 export * from "./components/inputs/Switch.jsx";
@@ -91,9 +99,13 @@ export * from "./components/inputs/Textarea.jsx";
 export * from "./components/inputs/Toggle.jsx";
 
 // layout
+export * from "./components/layout/AppShell.jsx";
 export * from "./components/layout/AspectRatio.jsx";
+export * from "./components/layout/DesignerShell.jsx";
+export * from "./components/layout/DocsLayout.jsx";
 export * from "./components/layout/Resizable.jsx";
 export * from "./components/layout/ScrollArea.jsx";
+export * from "./components/layout/SettingsPage.jsx";
 export * from "./components/layout/Sidebar.jsx";
 
 // overlay
@@ -107,7 +119,17 @@ export * from "./components/overlay/NavigationMenu.jsx";
 export * from "./components/overlay/Popover.jsx";
 export * from "./components/overlay/Sheet.jsx";
 
+// review
+export * from "./components/review/MarkupLayer.jsx";
+
+// settings
+export * from "./components/settings/HelpSteps.jsx";
+export * from "./components/settings/IntegrationSettings.jsx";
+export * from "./components/settings/TestRow.jsx";
+
 // utilities
+export * from "./components/utilities/BrandMark.jsx";
+export * from "./components/utilities/Icon.jsx";
 export * from "./components/utilities/Image.jsx";
 export * from "./components/utilities/OpenInChat.jsx";
 

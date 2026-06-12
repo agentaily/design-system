@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useCallback } from "react";
 
 const AX_QUEUE_CSS = `
 .ax-queue { display: flex; flex-direction: column; gap: 6px; }
@@ -38,10 +38,80 @@ export function Queue({ title = "Queued", items = [], onRemove, className = "", 
             <span className="ax-queue__num">{running ? "▶" : i + 1}</span>
             <span className="ax-queue__text">{item.text}</span>
             {item.status ? <span className="ax-queue__status">{item.status}</span> : null}
-            {onRemove && !running ? <button className="ax-queue__remove" aria-label="Remove" onClick={() => onRemove(i)}>✕</button> : null}
+            {onRemove && !running ? (
+              <button className="ax-queue__remove" aria-label="Remove" onClick={() => onRemove(i)}>
+                ✕
+              </button>
+            ) : null}
           </div>
         );
       })}
     </div>
   );
 }
+
+/* ============================================================
+   useQueue — headless "keep sending, buffer while busy" driver.
+   Exposed as Queue.useQueue. Pairs with the <Queue> display above.
+   The first prompt bootstraps via onFirst (once); everything sent
+   while busy accumulates and drains together as a BUFFER via onBatch.
+   Both callbacks are async and own the app-specific work (push
+   messages, run tools) — the hook only owns the queue + pump.
+   ============================================================ */
+let _qid = 0;
+function useQueue({ onFirst, onBatch } = {}) {
+  const [queue, setQueue] = useState([]); // pending items: { id, text }
+  const [busy, setBusy] = useState(false); // a drain loop is running
+  const itemsRef = useRef([]); // source of truth for the pump
+  const pumpingRef = useRef(false);
+  const initedRef = useRef(false); // first prompt has bootstrapped
+  const cbRef = useRef(null);
+  cbRef.current = { onFirst, onBatch }; // always call the latest callbacks
+  const pumpRef = useRef(null);
+
+  if (!pumpRef.current) {
+    pumpRef.current = async () => {
+      if (pumpingRef.current) return;
+      pumpingRef.current = true;
+      setBusy(true);
+      const cb = cbRef.current || {};
+      if (!initedRef.current && itemsRef.current.length) {
+        const job = itemsRef.current.shift();
+        setQueue(itemsRef.current.slice());
+        initedRef.current = true;
+        if (cb.onFirst) await cb.onFirst(job.text);
+        else if (cb.onBatch) await cb.onBatch([job.text]);
+      }
+      while (itemsRef.current.length) {
+        const batch = itemsRef.current.splice(0, itemsRef.current.length);
+        setQueue([]);
+        if (cb.onBatch) await cb.onBatch(batch.map((j) => j.text));
+      }
+      setBusy(false);
+      pumpingRef.current = false;
+    };
+  }
+
+  const enqueue = useCallback((text) => {
+    const t = (text || "").trim();
+    if (!t) return;
+    itemsRef.current = [...itemsRef.current, { id: ++_qid, text: t }];
+    setQueue(itemsRef.current.slice());
+    pumpRef.current();
+  }, []);
+
+  const remove = useCallback((i) => {
+    itemsRef.current = itemsRef.current.filter((_, idx) => idx !== i);
+    setQueue(itemsRef.current.slice());
+  }, []);
+
+  // clear the buffer and let the next prompt bootstrap again (e.g. "new chat")
+  const reset = useCallback(() => {
+    itemsRef.current = [];
+    initedRef.current = false;
+    setQueue([]);
+  }, []);
+
+  return { queue, busy, enqueue, remove, reset };
+}
+Queue.useQueue = useQueue;
