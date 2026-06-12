@@ -62,9 +62,13 @@ jobs:
       # Once the Version PR exists, queue auto-merge — GitHub merges it the
       # moment required checks go green. The post-merge run (no pending
       # changesets, so no PR) skips this step.
+      # `--auto` only works while the PR is NOT yet mergeable (it queues a merge
+      # to fire when required checks pass). This repo's Version PR branch has no
+      # required checks, so it's born CLEAN and `--auto` is rejected with
+      # "Pull request is in clean status" — so fall back to a direct squash merge.
       - name: Auto-merge the Version PR once CI is green
         if: steps.changesets.outputs.pullRequestNumber
-        run: gh pr merge --squash --auto "$PR"
+        run: gh pr merge --squash --auto "$PR" || gh pr merge --squash "$PR"
         env:
           PR: ${{ steps.changesets.outputs.pullRequestNumber }}
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
