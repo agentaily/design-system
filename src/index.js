@@ -132,6 +132,7 @@ export * from "./components/utilities/BrandMark.jsx";
 export * from "./components/utilities/Icon.jsx";
 export * from "./components/utilities/Image.jsx";
 export * from "./components/utilities/OpenInChat.jsx";
+export * from "./components/utilities/RotatingTagline.jsx";
 
 // voice
 export * from "./components/voice/AudioPlayer.jsx";

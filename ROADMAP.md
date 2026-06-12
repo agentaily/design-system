@@ -5,11 +5,11 @@
 ## 已完成 (Shipped)
 
 - **Foundations** — 双主题单色 tokens(**亮色 paper 优先**,`:root` 默认;暗色 ink 走 `[data-theme="dark"]`)、Space Grotesk + JetBrains Mono、4px 间距栅格、硬边圆角(2/4/8px)、品牌母题(光标 ▍ / 点阵 / 角标刻线 / mono ALL-CAPS)。布局尺寸 token `--topbar-h` / `--bar-h`。(`src/tokens`、`src/foundations`)
-- **组件库 — 112 个组件 / 15 个类别**:buttons · inputs · display · feedback · overlay · layout · chat · ai · code · voice · workflow · utilities,加产品域 **settings · auth · review**。每个组件 ship `.jsx` + `.d.ts`(props 契约)+ `.prompt.md`(用法)+ `.stories.jsx`。
+- **组件库 — 113 个组件 / 15 个类别**:buttons · inputs · display · feedback · overlay · layout · chat · ai · code · voice · workflow · utilities,加产品域 **settings · auth · review**。每个组件 ship `.jsx` + `.d.ts`(props 契约)+ `.prompt.md`(用法)+ `.stories.jsx`。
 - **生产级表单层** — `Form` / `FormActions` + 可选的 `Form.useForm` / `Form.useFieldArray`(RHF 对齐,零依赖)。(#2)
 - **无头 hooks(逻辑层)** — `Queue.useQueue`、`AuthDialog.useAuth`、`Form.useForm` / `useFieldArray`,作为静态属性挂在配对组件上,状态归调用方持有。
 - **整页 shells / frames(活组件,非拷贝模板)** — `AppShell`、`DesignerShell`、`DocsLayout`、`SettingsPage`、`SignInPage`、`ConversationThread`。
-- **产品域图层** — auth(`AuthDialog` / `AccountControl` / `SignInPage`)、settings(`IntegrationSettings` + `SecretField` / `StatusPill` / `TestRow` / `HelpSteps`)、review(`MarkupLayer` 点选式标注)、utilities(`Icon` 统一 Lucide 集、`BrandMark`)。
+- **产品域图层** — auth(`AuthDialog` / `AccountControl` / `SignInPage`)、settings(`IntegrationSettings` + `SecretField` / `StatusPill` / `TestRow` / `HelpSteps`)、review(`MarkupLayer` 点选式标注)、utilities(`Icon` 统一 Lucide 集、`BrandMark`、`RotatingTagline` 动画品牌标语)。
 - **分发三渠道** — npm 包 `@agentaily/design-system`(ESM、每组件一模块、可 tree-shake)、托管 Storybook(GitHub Pages)、Agent Skill(`skill/SKILL.md`)。
 - **全自动发版** — Changesets + GitHub Actions(Version PR → npm trusted publishing + GitHub Release)。(#1、#3)
 

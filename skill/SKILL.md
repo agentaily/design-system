@@ -22,7 +22,7 @@ import "@agentaily/design-system/styles.css"; // once, at the app root — loads
 import { Button, Composer, Reasoning } from "@agentaily/design-system";
 ```
 
-- **112 components across 15 categories** — buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities, plus the product-domain layers **settings, auth, review**. Compose them; never re-implement a primitive.
+- **113 components across 15 categories** — buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities, plus the product-domain layers **settings, auth, review**. Compose them; never re-implement a primitive.
 - **Find a component and its props:** browse the Storybook (every variant/state is a story); TypeScript contracts ship with the package (`.d.ts`).
 - Light theme (`paper`) is the default (on `:root`). For dark, set `data-theme="dark"` on a wrapping element (e.g. `<html data-theme="dark">`).
 
@@ -86,7 +86,7 @@ const q = Queue.useQueue({
 <ConversationThread controller={q} messages={messages} draft={draft} onDraftChange={setDraft} />;
 ```
 
-For credential/connection UIs there are also `SecretField` (masked input + show/hide), `StatusPill` (connection status chip), `TestRow` / `HelpSteps` (connection-card atoms), and the `IntegrationSettings` modal that composes them. `Icon` is the unified Lucide set (`Icon.names` lists all); `BrandMark` is the agentaily mark + wordmark. `MarkupLayer` (review) is a point-at-an-element overlay driven by `data-mk-label`.
+For credential/connection UIs there are also `SecretField` (masked input + show/hide), `StatusPill` (connection status chip), `TestRow` / `HelpSteps` (connection-card atoms), and the `IntegrationSettings` modal that composes them. `Icon` is the unified Lucide set (`Icon.names` lists all); `BrandMark` is the agentaily mark + wordmark; `RotatingTagline` is the animated brand headline (typing phrases + flowing rainbow gradient + trailing cursor — used in the auth brand panel and the marketing hero). `MarkupLayer` (review) is a point-at-an-element overlay driven by `data-mk-label`.
 
 ## Use it for throwaway artifacts (slides, mocks, static HTML)
 

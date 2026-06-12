@@ -79,7 +79,7 @@ ESM-only,每个组件一个模块(Vite `preserveModules`),消费方可 tree-shak
 
 | 路径                                            | 内容                                   |
 | ----------------------------------------------- | -------------------------------------- |
-| `dist/index.js`                                 | ESM 入口,re-export 全部 112 个组件符号 |
+| `dist/index.js`                                 | ESM 入口,re-export 全部 113 个组件符号 |
 | `dist/components/**/*.js`                       | 每组件独立模块(+ sourcemap)            |
 | `dist/index.d.ts` + `dist/components/**/*.d.ts` | TypeScript 类型契约                    |
 | `dist/styles.css`                               | 内联好的 tokens + 字体                 |

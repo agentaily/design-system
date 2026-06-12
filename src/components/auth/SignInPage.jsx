@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { BrandMark } from "../utilities/BrandMark.jsx";
+import { Input } from "../inputs/Input.jsx";
 import { Button } from "../buttons/Button.jsx";
 import { Icon } from "../utilities/Icon.jsx";
-import { Input } from "../inputs/Input.jsx";
+import { BrandMark } from "../utilities/BrandMark.jsx";
+import { RotatingTagline } from "../utilities/RotatingTagline.jsx";
 
 // SignInPage — full-page auth: a split brand panel (dot-grid + quote) beside a
 // centered card. One component, two modes (signin / signup) — the brand panel,
@@ -14,12 +15,14 @@ const AX_SIGNIN_CSS = `
 .ax-signin__brand { position: relative; border-right: 1px solid var(--border-default); background: var(--surface-panel);
   background-image: var(--dot-grid); background-size: 24px 24px; padding: 40px; display: flex; flex-direction: column; }
 .ax-signin__brandtop { display: flex; align-items: center; gap: 10px; }
-.ax-signin__mid { margin-top: auto; margin-bottom: auto; max-width: 22ch; }
-.ax-signin__quote { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--weight-medium); line-height: var(--leading-tight); letter-spacing: var(--tracking-tight); color: var(--text-body); margin: 0; }
+.ax-signin__mid { margin-top: auto; margin-bottom: auto; }
+.ax-signin__quote { font-family: var(--font-display); white-space: nowrap; font-size: clamp(40px, 4.4vw, var(--text-hero)); font-weight: var(--weight-medium); line-height: var(--leading-tight); letter-spacing: var(--tracking-tight); color: var(--text-body); margin: 0; }
 .ax-signin__by { margin: 16px 0 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--text-faint); }
 .ax-signin__form { display: flex; align-items: center; justify-content: center; padding: 40px; }
 .ax-signin__card { width: 100%; max-width: 360px; }
 .ax-signin__mbrand { display: none; }
+.ax-signin__mtag { display: none; }
+.ax-signin__mtag .ax-signin__quote { font-size: var(--text-3xl); }
 .ax-signin__h { margin: 0; font-family: var(--font-display); font-size: var(--text-2xl); font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); color: var(--text-body); }
 .ax-signin__sub { margin: 8px 0 28px; font-size: var(--text-sm); color: var(--text-muted); }
 .ax-signin__fields { display: flex; flex-direction: column; gap: 16px; }
@@ -39,7 +42,7 @@ const AX_SIGNIN_CSS = `
 .ax-signin__footlink { color: var(--text-body); background: none; border: none; cursor: pointer; font-family: inherit; font-size: var(--text-sm);
   border-bottom: 1px solid var(--border-strong); padding: 0 0 1px; transition: border-color var(--dur-1) var(--ease-out); }
 .ax-signin__footlink:hover { border-color: var(--text-faint); }
-@media (max-width: 860px) { .ax-signin { grid-template-columns: 1fr; } .ax-signin__brand { display: none; } .ax-signin__mbrand { display: flex; margin-bottom: 26px; } }
+@media (max-width: 860px) { .ax-signin { grid-template-columns: 1fr; } .ax-signin__brand { display: none; } .ax-signin__form { padding: 56px 40px; } .ax-signin__mbrand { display: flex; margin-bottom: 28px; } .ax-signin__mtag { display: block; margin-bottom: 36px; } .ax-signin__h { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: var(--weight-medium); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--text-body); margin: 0 0 8px; } .ax-signin__sub { margin: 0 0 32px; color: var(--text-muted); } .ax-signin__fields { gap: 22px; } .ax-signin__submit { margin-top: 32px; } .ax-signin__or { margin: 32px 0; } .ax-signin__foot { margin-top: 28px; } }
 `;
 
 if (typeof document !== "undefined" && !document.getElementById("ax-signin-css")) {
@@ -49,6 +52,9 @@ if (typeof document !== "undefined" && !document.getElementById("ax-signin-css")
   document.head.appendChild(s);
 }
 
+// Every user-facing string lives here so nothing is hardcoded in the markup.
+// Defaults are a self-consistent English baseline; pass a `copy` prop (any
+// subset, deep-merged per group) to localize — e.g. a full zh-CN object.
 const DEFAULT_COPY = {
   signin: {
     title: "Sign in",
@@ -64,6 +70,29 @@ const DEFAULT_COPY = {
     switchText: "Already have an account?",
     switchCta: "Sign in",
   },
+  labels: {
+    email: "EMAIL",
+    password: "PASSWORD",
+    confirm: "CONFIRM PASSWORD",
+    forgot: "Forgot?",
+    or: "OR",
+    sso: "Continue with SSO",
+  },
+  placeholders: {
+    email: "you@example.com",
+    password: "••••••••",
+    passwordNew: "At least 8 characters",
+    confirm: "Re-enter your password",
+  },
+  errors: {
+    emailRequired: "Enter your email",
+    emailInvalid: "That email doesn’t look right",
+    passwordRequired: "Enter your password",
+    passwordShort: "Password must be at least 8 characters",
+    confirmRequired: "Re-enter your password",
+    confirmMismatch: "Passwords don’t match",
+  },
+  terms: "By creating an account you agree to our Terms and Privacy Policy.",
 };
 
 export function SignInPage({
@@ -72,13 +101,14 @@ export function SignInPage({
   onModeChange,
   brand,
   copy,
+  tagline,
   email,
   password,
   onEmailChange,
   onPasswordChange,
   onSubmit,
   onForgot,
-  ssoLabel = "Continue with SSO",
+  ssoLabel,
   onSSO,
   terms,
   footer,
@@ -88,6 +118,11 @@ export function SignInPage({
   const m = mode !== undefined ? mode : modeI;
   const isSignup = m === "signup";
   const c = { ...DEFAULT_COPY[m], ...(copy && copy[m]) };
+  const labels = { ...DEFAULT_COPY.labels, ...(copy && copy.labels) };
+  const ph = { ...DEFAULT_COPY.placeholders, ...(copy && copy.placeholders) };
+  const err = { ...DEFAULT_COPY.errors, ...(copy && copy.errors) };
+  const ssoText = ssoLabel !== undefined ? ssoLabel : labels.sso;
+  const taglineProps = { breakAfterPrefix: true, ...tagline };
 
   const [emailI, setEmailI] = useState("");
   const [pwI, setPwI] = useState("");
@@ -121,13 +156,13 @@ export function SignInPage({
   const validate = () => {
     const e = {};
     const em = (emailV || "").trim();
-    if (!em) e.email = "请输入邮箱";
-    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) e.email = "邮箱格式不正确";
-    if (!pwV) e.password = "请输入密码";
-    else if (isSignup && pwV.length < 8) e.password = "密码至少 8 位";
+    if (!em) e.email = err.emailRequired;
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) e.email = err.emailInvalid;
+    if (!pwV) e.password = err.passwordRequired;
+    else if (isSignup && pwV.length < 8) e.password = err.passwordShort;
     if (isSignup) {
-      if (!confirm) e.confirm = "请再次输入密码";
-      else if (confirm !== pwV) e.confirm = "两次输入的密码不一致";
+      if (!confirm) e.confirm = err.confirmRequired;
+      else if (confirm !== pwV) e.confirm = err.confirmMismatch;
     }
     return e;
   };
@@ -141,25 +176,18 @@ export function SignInPage({
   };
 
   const termsNode =
-    terms !== undefined ? (
-      terms
-    ) : (
-      <>
-        注册即代表你同意 <span className="lk">服务条款</span> 与{" "}
-        <span className="lk">隐私政策</span>。
-      </>
-    );
+    terms !== undefined ? terms : c.terms !== undefined ? c.terms : DEFAULT_COPY.terms;
 
   return (
     <div className="ax-signin">
       {showBrandPanel ? (
         <aside className="ax-signin__brand">
-          <div className="ax-signin__brandtop">{brand || <BrandMark size={24} wordmark />}</div>
+          <div className="ax-signin__brandtop">
+            {brand || <BrandMark size={24} wordmark blink={false} />}
+          </div>
           <div className="ax-signin__mid">
             <p className="ax-signin__quote">
-              聊天，
-              <br />
-              构建万物
+              <RotatingTagline {...taglineProps} />
             </p>
             <p className="ax-signin__by">— AGENTAILY</p>
           </div>
@@ -168,33 +196,40 @@ export function SignInPage({
 
       <main className="ax-signin__form">
         <form className="ax-signin__card" onSubmit={submit} noValidate>
-          <div className="ax-signin__mbrand">{brand || <BrandMark size={22} wordmark />}</div>
+          <div className="ax-signin__mbrand">
+            {brand || <BrandMark size={22} wordmark blink={false} />}
+          </div>
+          <div className="ax-signin__mtag">
+            <p className="ax-signin__quote">
+              <RotatingTagline {...taglineProps} />
+            </p>
+          </div>
           <h1 className="ax-signin__h">{c.title}</h1>
           <p className="ax-signin__sub">{c.subtitle}</p>
 
           <div className="ax-signin__fields">
             <Input
-              label="EMAIL"
+              label={labels.email}
               type="email"
               autoComplete="email"
-              placeholder="you@example.com"
+              placeholder={ph.email}
               value={emailV}
               error={errs.email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <div>
               <div className="ax-signin__row">
-                <span className="ax-label">PASSWORD</span>
+                <span className="ax-label">{labels.password}</span>
                 {!isSignup && onForgot ? (
                   <button type="button" className="ax-signin__link" onClick={onForgot}>
-                    Forgot?
+                    {labels.forgot}
                   </button>
                 ) : null}
               </div>
               <Input
                 type="password"
                 autoComplete={isSignup ? "new-password" : "current-password"}
-                placeholder={isSignup ? "至少 8 位" : "••••••••"}
+                placeholder={isSignup ? ph.passwordNew : ph.password}
                 value={pwV}
                 error={errs.password}
                 onChange={(e) => setPw(e.target.value)}
@@ -202,10 +237,10 @@ export function SignInPage({
             </div>
             {isSignup ? (
               <Input
-                label="CONFIRM PASSWORD"
+                label={labels.confirm}
                 type="password"
                 autoComplete="new-password"
-                placeholder="再次输入密码"
+                placeholder={ph.confirm}
                 value={confirm}
                 error={errs.confirm}
                 onChange={(e) => setConf(e.target.value)}
@@ -224,11 +259,11 @@ export function SignInPage({
           {onSSO ? (
             <React.Fragment>
               <div className="ax-signin__or">
-                <span>OR</span>
+                <span>{labels.or}</span>
               </div>
               <button type="button" className="ax-signin__sso" onClick={onSSO}>
                 <Icon name="shield" size={15} />
-                {ssoLabel}
+                {ssoText}
               </button>
             </React.Fragment>
           ) : null}
