@@ -2,16 +2,17 @@
 
 Project subagents for **`@agentaily/design-system`**, the upstream **component library** (light-first monochrome React + Storybook). Each has a single responsibility, least-privilege tools, and communicates through **durable artifacts** — for this repo the artifacts are the **mirrored component files** (`.jsx` / `.d.ts` / `.prompt.md` / `.stories.jsx`), the **`.design-baseline/` snapshot**, `DESIGN.md`, and structured review reports. **This project is self-contained**: the model below + the verification recipe are the agents' shared truth — no external skill needed beyond the ones an agent explicitly loads (`design-sync` / `changesets-auto-release`).
 
-> ⚠️ This is **NOT a double-loop-TDD product** like `form-design`. There is **no `src/core` logic layer, no authored SPEC/Gherkin `features/`, and no unit/integration/e2e test suite**. Components are a **verbatim mirror** of a claude.ai/design handoff; the only repo-authored code is each component's `.stories.jsx`. So the classic 5-agent roster is **deliberately tailored down** (see "Why this roster" below). Don't reintroduce `spec-architect` / `implementer` / `outer-tester` / `designer` here — they have nothing to own.
+> ⚠️ This is **still not a double-loop-TDD product** like `form-design`. There is **no `src/core` logic layer, no authored SPEC/Gherkin `features/`, and no integration/e2e suite**. Components are a **verbatim mirror** of a claude.ai/design handoff; the only repo-authored code is each component's `.stories.jsx` **plus the unit tests in `tests/`**. But the library has now grown its first **logic-bearing primitive** — `<Markdown>` (markdown parser + XSS sanitizer + streaming tolerance) — so, exactly as this file predicted, a **`vitest` unit-test gate + `implementer` + [`TESTING.md`](../../TESTING.md)** have been reintroduced for that thin logic layer. The roster is **still tailored** (see "Why this roster"): `spec-architect` / `outer-tester` / `designer` remain cut — don't reintroduce them, they have nothing to own.
 
-## Roster (4 agents)
+## Roster (5 agents)
 
-| Agent           | Owns                                                                                                                                                                                                                       | Doesn't touch                                            |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `design-syncer` | Landing/updating handoffs via the **`design-sync` skill** (3-way merge into `.design-baseline/`); the mirrored `.jsx`/`.d.ts`/`.prompt.md` + repo-authored `.stories.jsx`; keeping component-count + consumer docs in sync | release/CI config, breaking-change notification, merging |
-| `reviewer`      | Independent adversarial review (read-only): mirror fidelity, contract/stories completeness, dual-theme, tokens-only, no hand-edited barrel                                                                                 | editing any file                                         |
-| `release-eng`   | Changesets auto-release · lefthook · Storybook→Pages · `build:lib`/`build-storybook` gates · **downstream breaking-change notification** (per `RELEASE.md`)                                                                | component source, stories, `.design-baseline/`           |
-| `pr-analyst`    | Triage an incoming PR → classify / decompose / route (read-only)                                                                                                                                                           | implementing, designing, merging                         |
+| Agent           | Owns                                                                                                                                                                                                                                 | Doesn't touch                                                         |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
+| `design-syncer` | Landing/updating handoffs via the **`design-sync` skill** (3-way merge into `.design-baseline/`); the mirrored `.jsx`/`.d.ts`/`.prompt.md` + repo-authored `.stories.jsx`; keeping component-count + consumer docs in sync           | release/CI config, breaking-change notification, merging              |
+| `implementer`   | The **inner unit-test loop** for logic-bearing primitives (parser/sanitizer/stateful hooks — today `<Markdown>`): writes the failing `tests/` unit test + brings it green (red→green→refactor). See [`TESTING.md`](../../TESTING.md) | the verbatim mirror files (`src/components/**`), handoffs, release/CI |
+| `reviewer`      | Independent adversarial review (read-only): mirror fidelity, contract/stories completeness, dual-theme, tokens-only, no hand-edited barrel, **unit-test quality + security contract**                                                | editing any file                                                      |
+| `release-eng`   | Changesets auto-release · lefthook · Storybook→Pages · `build:lib`/`build-storybook`/`test` gates · **downstream breaking-change notification** (per `RELEASE.md`)                                                                   | component source, stories, tests, `.design-baseline/`                 |
+| `pr-analyst`    | Triage an incoming PR → classify / decompose / route (read-only)                                                                                                                                                                     | implementing, designing, merging                                      |
 
 ## Flow (mirror-sync + PR-driven)
 
@@ -21,6 +22,9 @@ Claude Design handoff link ─► design-syncer ─► design-sync 3-way merge �
                                               (mirrored .jsx/.d.ts/.prompt.md
                                                + repo-authored .stories.jsx
                                                + gen:barrel + doc/count sync)
+logic-bearing primitive (e.g. <Markdown>) ─► implementer ─────────────────┤
+                                              (red→green→refactor unit test
+                                               in tests/ ONLY · npm test gate)
                                                                           ▼
                                                        reviewer  (independent, read-only)
                                                        ─► findings + verdict (ship | fix-first)
@@ -44,17 +48,18 @@ Claude Design handoff link ─► design-syncer ─► design-sync 3-way merge �
 This is a **mirror library**, so the double-loop TDD roster doesn't map 1:1:
 
 - **`spec-architect` — cut.** There's no authored `SPEC.md` and no Gherkin `features/`. The "what" comes from **upstream Claude Design** (mirrored into `DESIGN.md`), not authored here. The contract layer that _does_ exist (per-component `.d.ts` + `.prompt.md`) is **copied with the handoff**, owned by `design-syncer`, not invented.
-- **`implementer` — cut.** There is no `src/core` logic layer and no red→green→refactor inner loop — components are mirrored, not written. The closest real role is **`design-syncer`** (lands the mirror + authors stories).
-- **`outer-tester` — cut.** There is no unit / integration / e2e suite (no vitest, no Playwright). Verification is **`npm run build:lib && npm run build-storybook`** + reviewing every variant/state as a Storybook story in **both themes**. There's no behavior suite for an outer-tester to own.
+- **`implementer` — reintroduced (tailored).** The library grew its first real logic primitive — `<Markdown>` (markdown parser + XSS sanitizer + streaming tolerance) — so it now has a red→green→refactor inner loop and a `vitest` unit gate. `implementer` owns that loop, but **tailored**: it writes tests **only in `tests/`** and **never hand-edits the verbatim mirror** (a real bug in a mirror component is escalated upstream to `design-syncer` / a human, not patched here). Most components are still presentational mirrors with nothing to unit-test — see [`TESTING.md`](../../TESTING.md).
+- **`outer-tester` — still cut.** There's a `vitest` **unit** gate now (owned by `implementer`), but no **integration / e2e** suite (no Playwright) and no `features/` to realize. Verification beyond unit is still **`npm run build:lib && npm run build-storybook`** + reviewing every variant/state as a Storybook story in **both themes**. Nothing for a separate outer-tester to own yet — revisit if interaction/e2e via the Storybook test-runner gets wired (the deferred layers in `TESTING.md`).
 - **`designer` — not installed.** `designer` is for products that _consume_ a design system via their own Claude Design project. **This repo IS the design system** — it doesn't consume another one. Its design-ingest need (landing handoffs from _its own_ upstream Claude Design project) is owned by **`design-syncer`** instead.
 
-If this repo ever grows a real logic layer (e.g. richer headless hooks with their own tests), reintroduce `implementer` + a unit-test gate and a `TESTING.md` at that point — don't pre-stub them.
+That prophecy has now partially fired: `<Markdown>` was the logic layer, so `implementer` + a `vitest` unit gate + [`TESTING.md`](../../TESTING.md) are in. If a **further** layer appears (integration/e2e needs, or `spec-architect`-level behavior contracts), reintroduce the matching role _then_ — still don't pre-stub.
 
-## Verification recipe (the "done" gate — replaces a TESTING.md)
+## Verification recipe (the "done" gate — full detail in [`TESTING.md`](../../TESTING.md))
 
-There is no test pyramid here. "Done" for a component change is:
+The test posture and layering now live in **[`TESTING.md`](../../TESTING.md)** (this repo grew its first logic primitive — `<Markdown>` — so it has a `vitest` unit gate; most components remain presentational mirrors with nothing to unit-test). "Done" for a change is:
 
 ```bash
+npm test                  # unit gate — vitest (logic primitives; also runs on pre-push)
 npm run gen:barrel        # regenerate the public entry (pre-commit also auto-runs this)
 npm run build:lib         # ESM lib build — pre-push gate; catches broken exports/imports
 npm run build-storybook   # static Storybook — catches broken stories

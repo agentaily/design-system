@@ -74,7 +74,10 @@ src/components/      15 个类别的组件源码 + stories(含 auth / settings /
   <cat>/<Name>.d.ts       props 契约
   <cat>/<Name>.prompt.md  用法说明
   <cat>/<Name>.stories.jsx
+tests/               逻辑原语的单测(vitest;镜像组件之外,design-sync 不覆盖)— 见 TESTING.md
 ```
+
+测试约定(分层 / 选型 / 护栏)见 [TESTING.md](./TESTING.md):多数组件是展示型镜像,无逻辑可测;`vitest` 单测只覆盖**有逻辑的原语**(解析 / 净化 / 有状态 hook,目前是 `<Markdown>`)。`npm test` 跑单测,`npm run test:watch` 本地内环。
 
 ## 约定
 
