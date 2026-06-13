@@ -4,13 +4,13 @@
  * size in px. Add icons by copying Lucide paths into the source — never freehand.
  */
 export type IconName =
-  | "send" | "arrow" | "arrowLeft" | "plus" | "x" | "check" | "search"
+  | "send" | "arrow" | "arrowLeft" | "plus" | "x" | "menu" | "check" | "search"
   | "chevronDown" | "refresh" | "copy" | "trash" | "external" | "link"
   | "share" | "save" | "pen" | "target"
   | "warn" | "info" | "shield" | "zap" | "spark"
   | "key" | "table" | "plug" | "lock" | "user" | "mail" | "logout"
   | "message" | "settings" | "film" | "archive" | "folder" | "inbox" | "power" | "mic" | "code"
-  | "layout" | "phone" | "qr"
+  | "layout" | "monitor" | "phone" | "qr"
   | "sun" | "moon" | "eye" | "eyeOff";
 
 export interface IconProps extends React.SVGProps<SVGSVGElement> {

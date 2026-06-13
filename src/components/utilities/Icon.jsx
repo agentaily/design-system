@@ -196,6 +196,12 @@ const PATHS = {
       <path d="M9 3v18" />
     </g>
   ),
+  monitor: (
+    <g>
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <path d="M8 21h8M12 17v4" />
+    </g>
+  ),
   phone: (
     <g>
       <rect x="7" y="2" width="10" height="20" rx="2" />
