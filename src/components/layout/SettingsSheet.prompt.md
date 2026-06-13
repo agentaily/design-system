@@ -1,12 +1,7 @@
 A floating **settings page** built on `<PanelSheet>` — the middle layer between the bare floating shell and the section content.
 
 ```jsx
-import {
-  SettingsSheet,
-  IntegrationSettings,
-  DeepSeekCard,
-  FeishuCard,
-} from "@agentaily/design-system";
+import { SettingsSheet, PageSection, DeepSeekCard } from "@agentaily/design-system";
 ```
 
 ### The full chain
@@ -14,8 +9,8 @@ import {
 ```
 PanelSheet            floating layout shell (holds any content)
   └ SettingsSheet     settings page based on PanelSheet  ← this
-      └ IntegrationSettings   the "集成" section          ← content slot
-          └ DeepSeekCard / FeishuCard   composed-in cards
+      └ PageSection   the "集成" section (hero + body)    ← content slot
+          └ DeepSeekCard   composed-in connection card
 ```
 
 ```jsx
@@ -23,7 +18,6 @@ function Settings({ onClose }) {
   const [section, setSection] = React.useState("integrations");
   const [cfg, setCfg] = React.useState(initialFromServer);
   const patch = (p) => setCfg((c) => ({ ...c, ...p }));
-  const ready = (cfg.dsStatus === "ok" ? 1 : 0) + (cfg.fsStatus === "ok" ? 1 : 0);
 
   return (
     <SettingsSheet
@@ -39,10 +33,9 @@ function Settings({ onClose }) {
       onNavigate={setSection}
     >
       {section === "integrations" && (
-        <IntegrationSettings ready={ready} total={2}>
+        <PageSection eyebrow="集成 · INTEGRATIONS" title="连接你的服务">
           <DeepSeekCard {...deepSeekWiring} />
-          <FeishuCard {...feishuWiring} />
-        </IntegrationSettings>
+        </PageSection>
       )}
       {section === "general" && <GeneralSection />}
     </SettingsSheet>

@@ -7,8 +7,8 @@ import { PanelSheet } from "./PanelSheet.jsx";
 //
 //   PanelSheet        ← floating layout shell (holds any content)
 //     SettingsSheet   ← THIS — a settings page based on PanelSheet
-//       <IntegrationSettings> / other sections ← dropped into the content slot
-//         <DeepSeekCard/> <FeishuCard/>        ← composed-in cards
+//       <PageSection> / other sections      ← dropped into the content slot
+//         <DeepSeekCard/> …                  ← composed-in connection cards
 //
 // Layout (when `nav` is given): a FIXED full-height left rail + an independently
 // SCROLLING content pane. The header (PanelSheet bar) and the rail stay put;

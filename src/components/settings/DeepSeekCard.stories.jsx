@@ -20,7 +20,6 @@ const Frame = ({ children }) => <div style={{ maxWidth: 560, margin: "0 auto" }}
 function Host({ initial, masked = false, ...props }) {
   const [cfg, setCfg] = React.useState({
     dsKey: "",
-    dsModel: "deepseek-chat",
     dsStatus: "idle",
     dsResult: "",
     ...initial,
@@ -28,18 +27,13 @@ function Host({ initial, masked = false, ...props }) {
   const set = (patch) => setCfg((c) => ({ ...c, ...patch }));
   const test = () => {
     set({ dsStatus: "testing", dsResult: "" });
-    setTimeout(
-      () => set({ dsStatus: "ok", dsResult: "连接正常 · 延迟 0.4s · " + cfg.dsModel }),
-      700,
-    );
+    setTimeout(() => set({ dsStatus: "ok", dsResult: "连接正常 · 延迟 0.4s" }), 700);
   };
   return (
     <Frame>
       <DeepSeekCard
         apiKey={cfg.dsKey}
         onApiKeyChange={(v) => set({ dsKey: v, dsStatus: "idle", dsResult: "" })}
-        model={cfg.dsModel}
-        onModelChange={(v) => set({ dsModel: v })}
         status={cfg.dsStatus}
         result={cfg.dsResult}
         onTest={test}
@@ -59,7 +53,7 @@ export const Connected = {
       initial={{
         dsKey: "sk-demo1234567890",
         dsStatus: "ok",
-        dsResult: "连接正常 · 延迟 0.4s · deepseek-chat",
+        dsResult: "连接正常 · 延迟 0.4s",
       }}
     />
   ),
@@ -73,7 +67,7 @@ export const ConnectedExpanded = {
       initial={{
         dsKey: "sk-demo1234567890",
         dsStatus: "ok",
-        dsResult: "连接正常 · 延迟 0.4s · deepseek-chat",
+        dsResult: "连接正常 · 延迟 0.4s",
       }}
     />
   ),
@@ -95,9 +89,8 @@ export const MaskedStoredKey = {
     <Host
       masked
       initial={{
-        dsModel: "deepseek-reasoner",
         dsStatus: "ok",
-        dsResult: "连接正常 · deepseek-reasoner",
+        dsResult: "连接正常",
       }}
     />
   ),

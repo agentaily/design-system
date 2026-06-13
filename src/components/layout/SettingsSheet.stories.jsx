@@ -2,14 +2,14 @@ import React from "react";
 import { SettingsSheet } from "./SettingsSheet.jsx";
 import { SettingsSaveBar } from "./SettingsSaveBar.jsx";
 import { PageSection } from "./PageSection.jsx";
-import { IntegrationSettings } from "../settings/IntegrationSettings.jsx";
+import { DeepSeekCard } from "../settings/DeepSeekCard.jsx";
 import { Input } from "../inputs/Input.jsx";
 import { Select } from "../inputs/Select.jsx";
 
 // SettingsSheet — the full settings chain: a floating PanelSheet with a left
 // section nav + a scrolling content pane, one SettingsSaveBar per tab in the
-// footer (explicit save, GitHub model). The 集成 tab composes IntegrationSettings
-// (DeepSeek + Feishu cards); 通用 is a plain form tab; 账户 needs no save bar.
+// footer (explicit save, GitHub model). The 集成 tab composes a connection card
+// (DeepSeekCard) into a PageSection; 通用 is a plain form tab; 账户 needs no save bar.
 // Rendered fullscreen so the sheet fills the canvas; toggle paper/ink in the toolbar.
 export default {
   title: "Layout/SettingsSheet",
@@ -28,7 +28,7 @@ function Host() {
   const [active, setActive] = React.useState("integrations");
 
   // 集成 tab — host owns the connection config; dirty = cfg vs saved baseline.
-  const SEED = { dsKey: "", dsModel: "deepseek-chat", appId: "", secret: "", link: "" };
+  const SEED = { dsKey: "" };
   const [cfg, setCfg] = React.useState(SEED);
   const [savedCfg, setSavedCfg] = React.useState(SEED);
   const [intSaving, setIntSaving] = React.useState(false);
@@ -58,10 +58,16 @@ function Host() {
   let content;
   if (active === "integrations") {
     content = (
-      <IntegrationSettings
-        config={cfg}
-        onConfigChange={(patch) => setCfg((c) => ({ ...c, ...patch }))}
-      />
+      <PageSection
+        eyebrow="集成 · INTEGRATIONS"
+        title="连接你的服务"
+        description="连接驱动对话的 DeepSeek 模型服务。改完点底部「保存」生效。"
+      >
+        <DeepSeekCard
+          apiKey={cfg.dsKey}
+          onApiKeyChange={(v) => setCfg((c) => ({ ...c, dsKey: v }))}
+        />
+      </PageSection>
     );
   } else if (active === "general") {
     content = (
@@ -147,7 +153,13 @@ export const SingleColumn = {
       onClose={noop}
       footer={<SettingsSaveBar dirty status="idle" onSave={noop} />}
     >
-      <IntegrationSettings />
+      <PageSection
+        eyebrow="集成 · INTEGRATIONS"
+        title="连接你的服务"
+        description="连接驱动对话的 DeepSeek 模型服务。"
+      >
+        <DeepSeekCard apiKey="" onApiKeyChange={noop} />
+      </PageSection>
     </SettingsSheet>
   ),
 };

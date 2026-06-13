@@ -1,7 +1,7 @@
-A **pure-display** card for connecting a DeepSeek LLM key. Renders one card (masked key field · model select · help · Test row) — no state, no localStorage, no save bar, no gating. **The caller owns the config, persistence, Save, backend errors, and any readiness gate.** Reusable by any product wiring DeepSeek, not just the integration screen.
+A **pure-display** card for connecting a DeepSeek LLM key. Renders one card (masked key field · help · Test row) — no state, no localStorage, no save bar, no gating. **The caller owns the config, persistence, Save, backend errors, and any readiness gate.** Reusable by any product wiring DeepSeek, not just the integration screen.
 
 ```jsx
-import { DeepSeekCard, FeishuCard, Button } from "@agentaily/design-system";
+import { DeepSeekCard, Button } from "@agentaily/design-system";
 ```
 
 ### Controlled + backend-wired (the only mode)
@@ -30,13 +30,13 @@ function IntegrationsScreen({ initial, onClose }) {
   };
 
   // gating is the caller's rule, not the card's:
-  const allReady = cfg.dsStatus === "ok" && cfg.fsStatus === "ok";
+  const allReady = cfg.dsStatus === "ok";
 
   const save = async () => {
     setSaving(true);
     setSaveError("");
     try {
-      // empty dsKey / secret mean "keep the stored one" — omit them
+      // an empty dsKey means "keep the stored one" — omit it
       await fetch("/api/integrations", { method: "PUT", body: JSON.stringify(cfg) });
     } catch (e) {
       setSaveError(e.message);
@@ -51,26 +51,11 @@ function IntegrationsScreen({ initial, onClose }) {
       <DeepSeekCard
         apiKey={cfg.dsKey}
         onApiKeyChange={(v) => set({ dsKey: v, dsStatus: "idle", dsResult: "" })}
-        model={cfg.dsModel}
-        onModelChange={(v) => set({ dsModel: v })}
         status={cfg.dsStatus}
         result={cfg.dsResult}
         onTest={testDeepSeek}
         masked={cfg.hasStoredKey} // a key is stored server-side → echo masked
         keyError={cfg.dsKeyError} // field-level backend error, if any
-      />
-
-      <FeishuCard
-        appId={cfg.appId}
-        onAppIdChange={(v) => set({ appId: v })}
-        secret={cfg.secret}
-        onSecretChange={(v) => set({ secret: v, fsStatus: "idle" })}
-        link={cfg.link}
-        onLinkChange={(v) => set({ link: v })}
-        status={cfg.fsStatus}
-        result={cfg.fsResult}
-        onTest={testFeishu}
-        masked={cfg.hasStoredSecret}
       />
 
       {/* Save bar, gate, and backend-error display all belong to the caller: */}
