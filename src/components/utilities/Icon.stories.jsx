@@ -73,3 +73,16 @@ export const Colored = {
     </div>
   ),
 };
+
+// The `monitor` glyph — added for the downstream form-design preview "desktop"
+// view toggle. Lucide geometry (screen rect + stand foot); currentColor follows
+// the active theme. Toggle Storybook's theme to verify paper/ink rendering.
+export const Monitor = {
+  render: () => (
+    <div style={{ display: "flex", alignItems: "center", gap: 16, color: "var(--text-body)" }}>
+      {[14, 16, 18, 20, 24].map((s) => (
+        <Icon key={s} name="monitor" size={s} />
+      ))}
+    </div>
+  ),
+};
