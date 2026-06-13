@@ -104,9 +104,13 @@ export * from "./components/layout/AppShell.jsx";
 export * from "./components/layout/AspectRatio.jsx";
 export * from "./components/layout/DesignerShell.jsx";
 export * from "./components/layout/DocsLayout.jsx";
+export * from "./components/layout/PageSection.jsx";
+export * from "./components/layout/PanelFooter.jsx";
+export * from "./components/layout/PanelSheet.jsx";
 export * from "./components/layout/Resizable.jsx";
 export * from "./components/layout/ScrollArea.jsx";
-export * from "./components/layout/SettingsPage.jsx";
+export * from "./components/layout/SettingsSaveBar.jsx";
+export * from "./components/layout/SettingsSheet.jsx";
 export * from "./components/layout/Sidebar.jsx";
 
 // overlay
@@ -124,9 +128,11 @@ export * from "./components/overlay/Sheet.jsx";
 export * from "./components/review/MarkupLayer.jsx";
 
 // settings
+export * from "./components/settings/ConnectionCard.jsx";
 export * from "./components/settings/DeepSeekCard.jsx";
 export * from "./components/settings/FeishuCard.jsx";
 export * from "./components/settings/HelpSteps.jsx";
+export * from "./components/settings/IntegrationSettings.jsx";
 export * from "./components/settings/TestRow.jsx";
 
 // utilities

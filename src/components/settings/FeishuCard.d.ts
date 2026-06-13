@@ -51,7 +51,7 @@ export interface FeishuCardProps {
   linkError?: string;
   /** Rows for the auto field-mapping table. @default a 7-row RSVP sample */
   fieldMap?: FeishuFieldMapRow[];
-  /** Show the field-mapping table. @default true once `status === "ok"` */
+  /** Show the field-mapping table. @default false (opt-in — keeps the card compact) */
   showMapping?: boolean;
   /** Override the "如何获取…" guide — a `{title, steps, link}` object or a ready React node. */
   help?: ConnectionHelp | React.ReactNode;
@@ -59,6 +59,11 @@ export interface FeishuCardProps {
   canTest?: boolean;
   /** Idle hint in the TestRow before the first test. */
   idleHint?: string;
+  /** Collapse to a one-line summary when connected (`status === "ok"`); expands on click. @default true */
+  collapsible?: boolean;
+  /** Controlled expanded state (overrides the connected-collapses-by-default behavior). */
+  expanded?: boolean;
+  onExpandedChange?: (open: boolean) => void;
 }
 export declare function FeishuCard(props: FeishuCardProps): JSX.Element;
 /** Parse `{ token, table }` out of a Bitable share URL (table may be ""). Returns null if no app_token. */

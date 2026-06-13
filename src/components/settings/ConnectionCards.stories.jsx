@@ -27,8 +27,6 @@ function IntegrationsScreen() {
   const [cfg, setCfg] = React.useState({
     dsKey: "",
     dsModel: "deepseek-chat",
-    capOn: true,
-    cap: "200",
     dsStatus: "ok",
     dsResult: "连接正常 · 延迟 0.4s · deepseek-chat",
     appId: "cli_a1b2c3d4e5f6",
@@ -153,11 +151,6 @@ function IntegrationsScreen() {
             result={cfg.dsResult}
             onTest={() => mockTest("ds")}
             masked={cfg.hasStoredKey}
-            showUsageCap
-            capOn={cfg.capOn}
-            onCapOnChange={(on) => set({ capOn: on })}
-            cap={cfg.cap}
-            onCapChange={(v) => set({ cap: v })}
           />
           <FeishuCard
             appId={cfg.appId}

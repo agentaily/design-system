@@ -1,4 +1,4 @@
-A **pure-display** card for connecting a DeepSeek LLM key. Renders one card (masked key field · model select · optional usage cap · help · Test row) — no state, no localStorage, no save bar, no gating. **The caller owns the config, persistence, Save, backend errors, and any readiness gate.** Reusable by any product wiring DeepSeek, not just the integration screen.
+A **pure-display** card for connecting a DeepSeek LLM key. Renders one card (masked key field · model select · help · Test row) — no state, no localStorage, no save bar, no gating. **The caller owns the config, persistence, Save, backend errors, and any readiness gate.** Reusable by any product wiring DeepSeek, not just the integration screen.
 
 ```jsx
 import { DeepSeekCard, FeishuCard, Button } from "@agentaily/design-system";
@@ -58,11 +58,6 @@ function IntegrationsScreen({ initial, onClose }) {
         onTest={testDeepSeek}
         masked={cfg.hasStoredKey} // a key is stored server-side → echo masked
         keyError={cfg.dsKeyError} // field-level backend error, if any
-        showUsageCap
-        capOn={cfg.capOn}
-        onCapOnChange={(on) => set({ capOn: on })}
-        cap={cfg.cap}
-        onCapChange={(v) => set({ cap: v })}
       />
 
       <FeishuCard

@@ -20,7 +20,14 @@ if (typeof document !== "undefined" && !document.getElementById("ax-account-css"
   document.head.appendChild(s);
 }
 
-export function AccountControl({ user, onLogin, onLogout, items = [], signInLabel = "登录" }) {
+export function AccountControl({
+  user,
+  onLogin,
+  onLogout,
+  onProfile,
+  items = [],
+  signInLabel = "登录",
+}) {
   if (!user) {
     return (
       <Button variant="ghost" icon={<Icon name="user" size={14} />} onClick={onLogin}>
@@ -38,7 +45,11 @@ export function AccountControl({ user, onLogin, onLogout, items = [], signInLabe
       }
       items={[
         { type: "label", label: "已登录账户" },
-        { label: user.email, icon: <Icon name="mail" size={15} />, onSelect: () => {} },
+        {
+          label: user.email,
+          icon: <Icon name="mail" size={15} />,
+          onSelect: onProfile || (() => {}),
+        },
         ...(items.length ? [{ type: "separator" }, ...items] : []),
         { type: "separator" },
         {

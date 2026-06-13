@@ -15,6 +15,8 @@ export interface AccountControlProps {
   user?: { email: string; name?: string } | null;
   onLogin?: () => void;
   onLogout?: () => void;
+  /** Fires when the email row is selected — wire this to open a profile/account screen. */
+  onProfile?: () => void;
   /** Extra menu items inserted between the email and sign-out (e.g. 我的脚本). */
   items?: AccountMenuItem[];
   /** @default "登录" */
