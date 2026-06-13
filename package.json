@@ -1,7 +1,7 @@
 {
   "name": "@agentaily/design-system",
   "version": "0.7.1",
-  "description": "Agentaily design system — light-first monochrome React component library (115 components) + Storybook.",
+  "description": "Agentaily design system — light-first monochrome React component library (121 components) + Storybook.",
   "type": "module",
   "license": "UNLICENSED",
   "author": "Agentaily",

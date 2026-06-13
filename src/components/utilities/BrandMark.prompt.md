@@ -1,6 +1,8 @@
 The agentaily mark + optional wordmark. Monochrome `currentColor` — inherits and inverts with the theme.
 
 ```jsx
+import { BrandMark } from "@agentaily/design-system";
+
 <BrandMark size={20} />                    // mark only
 <BrandMark size={18} wordmark />           // mark + "agentaily" (no cursor — the lockup default)
 <BrandMark size={16} wordmark cursor />    // opt in to the blinking block cursor (liveness motif)
@@ -8,4 +10,4 @@ The agentaily mark + optional wordmark. Monochrome `currentColor` — inherits a
 ```
 
 - Drawn in `currentColor`; set `color` on a wrapper to tint (stay monochrome — never a brand hue).
-- The wordmark is always lowercase mono. The block cursor is the brand liveness motif but is **off by default** so shells (DesignerShell / SignInPage / AppShell / SettingsPage / DocsLayout…) read clean — pass `cursor` where you want the live motif.
+- The wordmark is always lowercase mono. The block cursor is the brand liveness motif but is **off by default** so shells (DesignerShell / SignInPage / AppShell / SettingsSheet / DocsLayout…) read clean — pass `cursor` where you want the live motif.

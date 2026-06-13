@@ -14,15 +14,15 @@ const Frame = ({ children }) => <div style={{ maxWidth: 560, margin: "0 auto" }}
 
 // A tiny caller that owns the config and drives status/result from a mock probe —
 // exactly the contract the pure-display card expects (props in, events out, no
-// internal state, no localStorage). The host clears the green pill on edit.
-function Host({ initial, masked = false, showUsageCap = false }) {
+// internal state, no localStorage). The host clears the green pill on edit. The
+// card composes <ConnectionCard>: connected (status "ok") collapses to a header
+// summary by default; click the row to expand.
+function Host({ initial, masked = false, ...props }) {
   const [cfg, setCfg] = React.useState({
     dsKey: "",
     dsModel: "deepseek-chat",
     dsStatus: "idle",
     dsResult: "",
-    capOn: false,
-    cap: "",
     ...initial,
   });
   const set = (patch) => setCfg((c) => ({ ...c, ...patch }));
@@ -44,11 +44,7 @@ function Host({ initial, masked = false, showUsageCap = false }) {
         result={cfg.dsResult}
         onTest={test}
         masked={masked}
-        showUsageCap={showUsageCap}
-        capOn={cfg.capOn}
-        onCapOnChange={(on) => set({ capOn: on })}
-        cap={cfg.cap}
-        onCapChange={(v) => set({ cap: v })}
+        {...props}
       />
     </Frame>
   );
@@ -56,9 +52,24 @@ function Host({ initial, masked = false, showUsageCap = false }) {
 
 export const Default = { render: () => <Host /> };
 
+// Connected → collapses to a one-line header summary by default; click to expand.
 export const Connected = {
   render: () => (
     <Host
+      initial={{
+        dsKey: "sk-demo1234567890",
+        dsStatus: "ok",
+        dsResult: "连接正常 · 延迟 0.4s · deepseek-chat",
+      }}
+    />
+  ),
+};
+
+// Force the form open even when connected.
+export const ConnectedExpanded = {
+  render: () => (
+    <Host
+      expanded
       initial={{
         dsKey: "sk-demo1234567890",
         dsStatus: "ok",
@@ -90,8 +101,4 @@ export const MaskedStoredKey = {
       }}
     />
   ),
-};
-
-export const WithUsageCap = {
-  render: () => <Host showUsageCap initial={{ capOn: true, cap: "200" }} />,
 };
