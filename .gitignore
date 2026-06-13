@@ -10,3 +10,4 @@ dist/
 
 # Design-sync baseline snapshot (working copy for 3-way diffs)
 .design-baseline/
+.autopilot-state.json

@@ -6,3 +6,13 @@ One chat turn. User = right-aligned card; assistant = full-width prose under a m
 ```
 
 `streaming` appends the blinking block cursor.
+
+The body accepts markdown: pass a string as `children` or use the `markdown` prop and it renders through `<Markdown>` (lists, bold/italic, inline code, code blocks, links). Passing React nodes still works unchanged.
+
+````jsx
+<Message
+  role="assistant"
+  streaming
+  markdown={"Steps:\n\n- parse **input**\n- call `run()`\n\n```js\nrun();\n```"}
+/>
+````

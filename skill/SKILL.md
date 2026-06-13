@@ -22,7 +22,7 @@ import "@agentaily/design-system/styles.css"; // once, at the app root — loads
 import { Button, Composer, Reasoning } from "@agentaily/design-system";
 ```
 
-- **114 components across 15 categories** — buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities, plus the product-domain layers **settings, auth, review**. Compose them; never re-implement a primitive.
+- **115 components across 15 categories** — buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities, plus the product-domain layers **settings, auth, review**. Compose them; never re-implement a primitive.
 - **Find a component and its props:** browse the Storybook (every variant/state is a story); TypeScript contracts ship with the package (`.d.ts`).
 - Light theme (`paper`) is the default (on `:root`). For dark, set `data-theme="dark"` on a wrapping element (e.g. `<html data-theme="dark">`).
 
@@ -84,6 +84,15 @@ const q = Queue.useQueue({
   onBatch: async (texts) => texts.forEach((t) => push({ role: "user", text: t })),
 });
 <ConversationThread controller={q} messages={messages} draft={draft} onDraftChange={setDraft} />;
+```
+
+**Chat message bodies render markdown.** `<Message>` takes a markdown **string** (the `markdown` prop, or a plain string as children) and renders it through `<Markdown>` — paragraphs, **bold**/_italic_/~~strike~~, `inline code`, fenced code blocks, ordered/unordered/nested/task lists, blockquotes, GFM tables (per-column alignment), links + bare-URL autolinks, `#`/`##`/`###` headings. Safe by construction (no `dangerouslySetInnerHTML`, link hrefs scheme-sanitized, images inert) and streaming-tolerant (half tables / unclosed marks degrade to partial/literal, never throw). React-node children still render unchanged (back-compat). Use `<Markdown content={…} />` standalone for any model-output surface.
+
+```jsx
+import { Message, Markdown } from "@agentaily/design-system";
+
+<Message role="assistant" streaming markdown={modelText} />; // chat turn, typeset
+<Markdown content={modelText} />; // standalone
 ```
 
 For credential/connection UIs there are also `SecretField` (masked input + show/hide), `StatusPill` (connection status chip), and `TestRow` / `HelpSteps` (connection-card atoms). `DeepSeekCard` (LLM key) and `FeishuCard` (Bitable sink) compose those atoms into two **pure-display** connection cards — props in, events out, **zero state / localStorage / save bar / gating**; the caller owns the config, persistence, Save, backend errors, and any readiness gate (same headless philosophy as `Form.useForm` / `Queue.useQueue`). `Icon` is the unified Lucide set (`Icon.names` lists all); `BrandMark` is the agentaily mark + wordmark; `RotatingTagline` is the animated brand headline (typing phrases + flowing rainbow gradient + trailing cursor — used in the auth brand panel and the marketing hero). `MarkupLayer` (review) is a point-at-an-element overlay driven by `data-mk-label`.
