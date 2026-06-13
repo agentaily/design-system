@@ -1,5 +1,11 @@
 # @agentaily/design-system
 
+## 0.7.1
+
+### Patch Changes
+
+- [#18](https://github.com/agentaily/design-system/pull/18) [`9365141`](https://github.com/agentaily/design-system/commit/9365141e53688f67a1fa9da40e3d4923a05c1ef6) Thanks [@yarnovo](https://github.com/yarnovo)! - Ship `CHANGELOG.md` inside the npm package (added to `files`), so downstreams can read the changelog from `node_modules/@agentaily/design-system/CHANGELOG.md` instead of only on GitHub.
+
 ## 0.7.0
 
 ### Minor Changes
