@@ -3,7 +3,7 @@ import { ConnectionCard } from "./ConnectionCard.jsx";
 import { SecretField } from "../inputs/SecretField.jsx";
 
 // ConnectionCard is the shared shell (icon · title · summary · status · collapse
-// · TestRow) that DeepSeekCard / FeishuCard compose. Here it is driven directly
+// · TestRow) that DeepSeekCard composes. Here it is driven directly
 // with generic fields. A connected card (status "ok") starts collapsed to its
 // header row; click the row to expand, the chevron to collapse.
 export default {

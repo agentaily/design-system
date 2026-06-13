@@ -1,7 +1,7 @@
 /**
  * ConnectionCard — the shared shell for a service-connection card (L3 organism),
  * built on the base `<Card>` primitive (`padding="none"` + status tint + the
- * header / body / TestRow bands). `DeepSeekCard`, `FeishuCard` and any future
+ * header / body / TestRow bands). `DeepSeekCard` and any future
  * connector compose it and supply only their own fields as `children`.
  *
  * Pure-display: the one bit of local state is the collapse toggle — a connected

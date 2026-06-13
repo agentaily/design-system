@@ -4,8 +4,8 @@
  *
  *   PanelSheet (floating shell)
  *     └ SettingsSheet (settings page) ← this
- *         └ IntegrationSettings / other section  (content slot)
- *             └ DeepSeekCard / FeishuCard …       (composed-in cards)
+ *         └ PageSection / other section  (content slot)
+ *             └ DeepSeekCard …            (composed-in connection cards)
  *
  * It wraps PanelSheet and adds an optional left section nav (集成 / 通用 / 账户…)
  * + a centered content column for the active section's content (`children`).
@@ -42,7 +42,7 @@ export interface SettingsSheetProps {
   onNavigate?: (id: string) => void;
   /** Accessible dialog label (falls back to `crumb`). */
   label?: string;
-  /** Content for the active section (e.g. an `<IntegrationSettings>`). */
+  /** Content for the active section (e.g. a `<PageSection>` of connection cards). */
   children?: React.ReactNode;
 }
 export declare function SettingsSheet(props: SettingsSheetProps): JSX.Element | null;

@@ -1,15 +1,15 @@
 import React from "react";
 import { DeepSeekCard } from "./DeepSeekCard.jsx";
-import { FeishuCard } from "./FeishuCard.jsx";
 import { Button } from "../buttons/Button.jsx";
 import { Icon } from "../utilities/Icon.jsx";
 import { Spinner } from "../feedback/Spinner.jsx";
 
-// Reference host for the two pure-display connection cards. EVERYTHING outside
-// the cards — the config object, persistence, the readiness rail, the Save bar +
-// gate, and the backend-error slot — belongs to this caller; the cards only
-// render (props in, events out). Mirrors settings/connectioncards.card.html and
-// the DeepSeekCard.prompt.md "controlled + backend-wired" example.
+// Reference host for the pure-display connection card. EVERYTHING outside the
+// card — the config object, persistence, the readiness rail, the Save bar + gate,
+// and the backend-error slot — belongs to this caller; the card only renders
+// (props in, events out). Mirrors the DeepSeekCard.prompt.md "controlled +
+// backend-wired" example. Compose more services by dropping additional cards
+// (another DeepSeekCard, or a custom card built on ConnectionCard) into the host.
 export default {
   title: "Settings/Connection Cards",
   parameters: { layout: "fullscreen" },
@@ -26,39 +26,20 @@ const railDot = (on) => ({
 function IntegrationsScreen() {
   const [cfg, setCfg] = React.useState({
     dsKey: "",
-    dsModel: "deepseek-chat",
     dsStatus: "ok",
-    dsResult: "连接正常 · 延迟 0.4s · deepseek-chat",
-    appId: "cli_a1b2c3d4e5f6",
-    secret: "",
-    link: "https://team.feishu.cn/base/bascnEXAMPLE?table=tblRSVP",
-    fsStatus: "ok",
-    fsResult: "已连接 ·「报名登记表」· 检测到 6 个字段",
+    dsResult: "连接正常 · 延迟 0.4s",
     hasStoredKey: true,
-    hasStoredSecret: true,
   });
   const [saving, setSaving] = React.useState(false);
   const set = (patch) => setCfg((c) => ({ ...c, ...patch }));
 
-  const mockTest = (which) => {
-    const k = which === "ds" ? "dsStatus" : "fsStatus";
-    const r = which === "ds" ? "dsResult" : "fsResult";
-    set({ [k]: "testing", [r]: "" });
-    setTimeout(
-      () =>
-        set({
-          [k]: "ok",
-          [r]:
-            which === "ds"
-              ? "连接正常 · 延迟 0.4s · deepseek-chat"
-              : "已连接 ·「报名登记表」· 检测到 6 个字段",
-        }),
-      800,
-    );
+  const mockTest = () => {
+    set({ dsStatus: "testing", dsResult: "" });
+    setTimeout(() => set({ dsStatus: "ok", dsResult: "连接正常 · 延迟 0.4s" }), 800);
   };
 
-  const ready = (cfg.dsStatus === "ok" ? 1 : 0) + (cfg.fsStatus === "ok" ? 1 : 0);
-  const allReady = ready === 2;
+  const ready = cfg.dsStatus === "ok" ? 1 : 0;
+  const allReady = ready === 1;
   const save = () => {
     setSaving(true);
     setTimeout(() => setSaving(false), 600);
@@ -93,7 +74,7 @@ function IntegrationsScreen() {
               maxWidth: "60ch",
             }}
           >
-            两张可复用的连接卡——状态、持久化、保存与门禁都归这个调用方页面，卡片只负责渲染。
+            可复用的连接卡——状态、持久化、保存与门禁都归这个调用方页面，卡片只负责渲染。
           </p>
         </div>
 
@@ -111,20 +92,17 @@ function IntegrationsScreen() {
         >
           <div style={{ display: "flex", gap: 7, flex: "none" }}>
             <span style={railDot(cfg.dsStatus === "ok")} />
-            <span style={railDot(cfg.fsStatus === "ok")} />
           </div>
           <div style={{ flex: 1, fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
             {allReady ? (
               <span>
-                <strong style={{ color: "var(--text-body)", fontWeight: 500 }}>
-                  两项连接均已就绪。
-                </strong>
+                <strong style={{ color: "var(--text-body)", fontWeight: 500 }}>连接已就绪。</strong>
                 保存后即可开始运行。
               </span>
             ) : (
               <span>
                 完成下方{" "}
-                <strong style={{ color: "var(--text-body)", fontWeight: 500 }}>2 项</strong>{" "}
+                <strong style={{ color: "var(--text-body)", fontWeight: 500 }}>1 项</strong>{" "}
                 连接后才能发布运行。
               </span>
             )}
@@ -137,7 +115,7 @@ function IntegrationsScreen() {
               flex: "none",
             }}
           >
-            {ready} / 2
+            {ready} / 1
           </span>
         </div>
 
@@ -145,24 +123,10 @@ function IntegrationsScreen() {
           <DeepSeekCard
             apiKey={cfg.dsKey}
             onApiKeyChange={(v) => set({ dsKey: v, dsStatus: "idle", dsResult: "" })}
-            model={cfg.dsModel}
-            onModelChange={(v) => set({ dsModel: v })}
             status={cfg.dsStatus}
             result={cfg.dsResult}
-            onTest={() => mockTest("ds")}
+            onTest={mockTest}
             masked={cfg.hasStoredKey}
-          />
-          <FeishuCard
-            appId={cfg.appId}
-            onAppIdChange={(v) => set({ appId: v, fsStatus: "idle", fsResult: "" })}
-            secret={cfg.secret}
-            onSecretChange={(v) => set({ secret: v, fsStatus: "idle", fsResult: "" })}
-            link={cfg.link}
-            onLinkChange={(v) => set({ link: v, fsStatus: "idle", fsResult: "" })}
-            status={cfg.fsStatus}
-            result={cfg.fsResult}
-            onTest={() => mockTest("fs")}
-            masked={cfg.hasStoredSecret}
           />
         </div>
 
@@ -194,7 +158,7 @@ function IntegrationsScreen() {
             ) : (
               <>
                 <Icon name="info" size={15} style={{ color: "var(--text-faint)" }} />
-                <span>完成两项连接后即可保存。</span>
+                <span>完成连接后即可保存。</span>
               </>
             )}
           </div>

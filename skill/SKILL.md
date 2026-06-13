@@ -22,7 +22,7 @@ import "@agentaily/design-system/styles.css"; // once, at the app root — loads
 import { Button, Composer, Reasoning } from "@agentaily/design-system";
 ```
 
-- **121 components across 15 categories** — buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities, plus the product-domain layers **settings, auth, review**. Compose them; never re-implement a primitive.
+- **119 components across 15 categories** — buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities, plus the product-domain layers **settings, auth, review**. Compose them; never re-implement a primitive.
 - **Find a component and its props:** browse the Storybook (every variant/state is a story); TypeScript contracts ship with the package (`.d.ts`).
 - Light theme (`paper`) is the default (on `:root`). For dark, set `data-theme="dark"` on a wrapping element (e.g. `<html data-theme="dark">`).
 
@@ -73,8 +73,8 @@ The settings UI is a four-layer chain, each layer built on the one below and reu
 ```
 PanelSheet            full-screen rise-up overlay shell (Header + body + optional Footer slot)
   └ SettingsSheet     floating settings page: left section nav + right content
-      └ IntegrationSettings   the 「集成」 section (alias ServiceConnections): hero + readiness rail + card slot
-          └ DeepSeekCard / FeishuCard   connection cards composed in via children (built on ConnectionCard ← Card)
+      └ PageSection   the 「集成」 (or any) section: eyebrow + title + body slot ← you compose it
+          └ DeepSeekCard   connection card(s) composed in via children (built on ConnectionCard ← Card)
 PanelFooter           footer-content component (status-left / actions-right) for a sheet's footer slot
 SettingsSaveBar       per-tab bottom save bar (explicit save, GitHub model) — composes PanelFooter
 PageSection           generic eyebrow + title + description + body section (alias SettingsSection)
@@ -85,9 +85,8 @@ You configure the left nav (`集成 / 通用 / 账户 …`) via `SettingsSheet`'
 ```jsx
 import {
   SettingsSheet,
-  IntegrationSettings,
+  PageSection,
   DeepSeekCard,
-  FeishuCard,
   SettingsSaveBar,
 } from "@agentaily/design-system";
 
@@ -107,15 +106,14 @@ import {
   }
 >
   {tab === "integrations" && (
-    <IntegrationSettings ready={readyCount} total={2}>
+    <PageSection eyebrow="集成 · INTEGRATIONS" title="连接你的服务">
       <DeepSeekCard {...deepSeekProps} />
-      <FeishuCard {...feishuProps} />
-    </IntegrationSettings>
+    </PageSection>
   )}
 </SettingsSheet>;
 ```
 
-Migrating from a hand-rolled overlay? Delete any local `.s-overlay / .s-modal / .s-wrap` shell CSS and mount `<PanelSheet>`; `IntegrationSettings` no longer has `onSave/saving/saveError` (save lives in the footer's `SettingsSaveBar`); the usage-cap (`showUsageCap`) was removed; for "save instantly" instead, skip `SettingsSaveBar` and persist in `onChange`.
+Migrating from a hand-rolled overlay? Delete any local `.s-overlay / .s-modal / .s-wrap` shell CSS and mount `<PanelSheet>`; compose the 集成 section yourself as a `<PageSection>` holding the connection cards — the old all-in-one `IntegrationSettings` and the `FeishuCard` were removed, so you own the config + persistence + Save (via the footer's `SettingsSaveBar`); for "save instantly" instead, skip `SettingsSaveBar` and persist in `onChange`.
 
 ### Headless hooks (logic without UI)
 
@@ -146,7 +144,7 @@ import { Message, Markdown } from "@agentaily/design-system";
 <Markdown content={modelText} />; // standalone
 ```
 
-For credential/connection UIs there are also `SecretField` (masked input + show/hide), `StatusPill` (connection status chip), and `TestRow` / `HelpSteps` (connection-card atoms). `ConnectionCard` is the shared connection-card shell (built on `Card`: collapsible header + body + test row + status tint); `DeepSeekCard` (LLM key) and `FeishuCard` (Bitable sink) compose it into two **pure-display** cards — props in, events out, **zero state / localStorage / gating**; the caller owns the config, persistence, Save, backend errors, and any readiness gate (same headless philosophy as `Form.useForm` / `Queue.useQueue`). Connected cards collapse to a one-line summary by default (`collapsible`). `AccountControl` (auth) takes `onProfile` to make its email row jump to a profile/account screen. `Icon` is the unified Lucide set (`Icon.names` lists all); `BrandMark` is the agentaily mark + wordmark; `RotatingTagline` is the animated brand headline (typing phrases + flowing rainbow gradient + trailing cursor — used in the auth brand panel and the marketing hero). `MarkupLayer` (review) is a point-at-an-element overlay driven by `data-mk-label`.
+For credential/connection UIs there are also `SecretField` (masked input + show/hide), `StatusPill` (connection status chip), and `TestRow` / `HelpSteps` (connection-card atoms). `ConnectionCard` is the shared connection-card shell (built on `Card`: collapsible header + body + test row + status tint); `DeepSeekCard` (LLM key) composes it into a **pure-display** card — props in, events out, **zero state / localStorage / gating**; the caller owns the config, persistence, Save, backend errors, and any readiness gate (same headless philosophy as `Form.useForm` / `Queue.useQueue`). Build cards for other services by composing `ConnectionCard` the same way. Connected cards collapse to a one-line summary by default (`collapsible`). `AccountControl` (auth) takes `onProfile` to make its email row jump to a profile/account screen. `Icon` is the unified Lucide set (`Icon.names` lists all); `BrandMark` is the agentaily mark + wordmark; `RotatingTagline` is the animated brand headline (typing phrases + flowing rainbow gradient + trailing cursor — used in the auth brand panel and the marketing hero). `MarkupLayer` (review) is a point-at-an-element overlay driven by `data-mk-label`.
 
 ## Use it for throwaway artifacts (slides, mocks, static HTML)
 

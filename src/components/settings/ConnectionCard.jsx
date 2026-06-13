@@ -6,7 +6,7 @@ import { TestRow } from "./TestRow.jsx";
 
 // ConnectionCard — the shared shell for a service connection card (L3 organism),
 // built on the base <Card> primitive. It owns ONE source of the connection-card
-// anatomy that DeepSeekCard / FeishuCard (and any future connector) compose:
+// anatomy that DeepSeekCard (and any future connector) compose:
 //
 //   ┌ header  ── icon · title · summary(collapsed) ·········· status · ⌄ ┐
 //   │ body    ── the connector's own fields (children)                   │

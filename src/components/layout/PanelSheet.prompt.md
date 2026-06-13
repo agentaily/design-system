@@ -61,7 +61,7 @@ The footer is a full-bleed band whose content shares the header's gutter, so the
 </PanelSheet>
 ```
 
-**Best practice — who owns Save?** The _container_ (PanelSheet / SettingsSheet) owns the persistent footer + commit actions; the _section_ (e.g. `IntegrationSettings`) owns the content and exposes its state (readiness / dirty) to the page, which wires the footer button. Never bury the primary commit action in the scrolling body.
+**Best practice — who owns Save?** The _container_ (PanelSheet / SettingsSheet) owns the persistent footer + commit actions; the _section_ (e.g. a `PageSection` of connection cards) owns the content and exposes its state (readiness / dirty) to the page, which wires the footer button. Never bury the primary commit action in the scrolling body.
 
 - **Default brand:** the bar shows `<BrandMark wordmark blink={false} />` (no blinking cursor) + the breadcrumb. Override with `brand`, or pass `word=""` for the mark only.
 - **`wrap`** (default `true`): header / body / footer content all align to one centered `maxWidth` column (default 768) with a shared `gutter` (default 24). Set `wrap={false}` for full-bleed bands (e.g. a split layout with a nav rail — what `SettingsSheet` does) and lay out the inside yourself.

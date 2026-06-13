@@ -2,18 +2,12 @@ import React from "react";
 import { ConnectionCard } from "./ConnectionCard.jsx";
 import { HelpSteps } from "./HelpSteps.jsx";
 import { SecretField } from "../inputs/SecretField.jsx";
-import { Select } from "../inputs/Select.jsx";
 
 // DeepSeekCard — a PURE-DISPLAY connection card for a DeepSeek LLM key. Props in
-// (apiKey, model, status, result, masked, errors, help…), events out
-// (onApiKeyChange / onModelChange / onTest). The caller owns config + persistence.
+// (apiKey, status, result, masked, errors, help…), events out
+// (onApiKeyChange / onTest). The caller owns config + persistence.
 // It composes the shared <ConnectionCard> shell (header / collapse / TestRow) and
-// only supplies its own fields (key · model · help).
-const DS_DEFAULT_MODELS = [
-  { value: "deepseek-chat", label: "deepseek-chat · 通用 · 快" },
-  { value: "deepseek-reasoner", label: "deepseek-reasoner · 深度推理" },
-];
-
+// only supplies its own fields (key · help).
 const DS_DEFAULT_HELP = {
   title: "如何获取 DeepSeek API Key？",
   steps: [
@@ -34,9 +28,6 @@ const DS_DEFAULT_HELP = {
 export function DeepSeekCard({
   apiKey = "",
   onApiKeyChange,
-  model = "deepseek-chat",
-  onModelChange,
-  models = DS_DEFAULT_MODELS,
   status = "idle",
   result,
   onTest,
@@ -54,7 +45,7 @@ export function DeepSeekCard({
   const maskedNow = masked && !(apiKey || "").trim();
   const testDisabled = canTest !== undefined ? !canTest : !(apiKey || "").trim() && !masked;
   const help_ = help || DS_DEFAULT_HELP;
-  const summary = result || (status === "ok" ? "已连接 · " + model : "未连接");
+  const summary = result || (status === "ok" ? "已连接" : "未连接");
 
   return (
     <ConnectionCard
@@ -81,15 +72,6 @@ export function DeepSeekCard({
         hint={maskedNow ? "已存密钥 · 留空表示不修改，输入新值即覆盖" : undefined}
         error={keyError}
       />
-
-      <div>
-        <label className="ax-cfield__label ax-label">对话模型</label>
-        <Select
-          value={model}
-          onChange={(e) => onModelChange && onModelChange(e.target.value)}
-          options={models}
-        />
-      </div>
 
       <HelpStepsSlot help={help_} />
     </ConnectionCard>

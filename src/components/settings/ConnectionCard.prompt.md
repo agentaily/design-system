@@ -1,4 +1,4 @@
-The shared **shell** for a service-connection card (L3), built on the base `<Card>`. `DeepSeekCard` / `FeishuCard` compose it; reach for it directly when you need a **new** connector card with the same anatomy (collapsible header · body · Test footer · status tint).
+The shared **shell** for a service-connection card (L3), built on the base `<Card>`. `DeepSeekCard` composes it; reach for it directly when you need a **new** connector card with the same anatomy (collapsible header · body · Test footer · status tint).
 
 ```jsx
 import { ConnectionCard, SecretField, Button } from "@agentaily/design-system";

@@ -25,6 +25,6 @@ import { PageSection } from "@agentaily/design-system";
 - **`actions`** sits to the right of the title (e.g. a "新建" / "查看文档" button).
 - **`tight`** gives a smaller title + tighter spacing for stacked sub-sections within one page.
 - **`headingLevel`** sets the title's `h1`–`h6` tag for a correct document outline.
-- **In settings:** drop it into a `SettingsSheet` content pane and put the commit `SettingsSaveBar` in the sheet footer. `IntegrationSettings` is built on it — its hero is a `PageSection` with the readiness rail + connection cards as the body.
+- **In settings:** drop it into a `SettingsSheet` content pane and put the commit `SettingsSaveBar` in the sheet footer. The 集成 section is a `PageSection` hero with the connection cards (e.g. `DeepSeekCard`) as its body.
 - `SettingsSection` remains exported as a **back-compat alias** of `PageSection`.
 - Pure layout, no state. Namespace `.ax-psec*`.
