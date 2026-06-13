@@ -32,6 +32,7 @@ export * from "./components/buttons/IconButton.jsx";
 export * from "./components/chat/CodeBlock.jsx";
 export * from "./components/chat/Composer.jsx";
 export * from "./components/chat/ConversationThread.jsx";
+export * from "./components/chat/Markdown.jsx";
 export * from "./components/chat/Message.jsx";
 
 // code

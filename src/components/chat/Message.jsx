@@ -1,4 +1,5 @@
 import React from "react";
+import { Markdown } from "./Markdown.jsx";
 
 const AX_MSG_CSS = `
 .ax-msg { display: flex; flex-direction: column; }
@@ -42,12 +43,28 @@ export function Message({
   name,
   time,
   streaming = false,
+  markdown,
   children,
   className = "",
   ...rest
 }) {
   const isUser = role === "user";
-  const cls = ["ax-msg", isUser ? "ax-msg--user" : "ax-msg--assistant", className].filter(Boolean).join(" ");
+  const cls = ["ax-msg", isUser ? "ax-msg--user" : "ax-msg--assistant", className]
+    .filter(Boolean)
+    .join(" ");
+
+  // Back-compat: React-node children render as-is. A markdown string (via the
+  // `markdown` prop, or a plain string passed as children) routes through
+  // <Markdown> so model output is typeset without breaking existing usage.
+  let body;
+  if (typeof markdown === "string") {
+    body = <Markdown content={markdown} />;
+  } else if (typeof children === "string") {
+    body = <Markdown content={children} />;
+  } else {
+    body = children;
+  }
+
   return (
     <div className={cls} {...rest}>
       {!isUser ? (
@@ -57,7 +74,7 @@ export function Message({
         </div>
       ) : null}
       <div className="ax-msg__body">
-        {children}
+        {body}
         {streaming ? <span className="ax-msg__cursor"></span> : null}
       </div>
     </div>
