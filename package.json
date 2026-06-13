@@ -36,7 +36,8 @@
   },
   "files": [
     "dist",
-    "DESIGN.md"
+    "DESIGN.md",
+    "CHANGELOG.md"
   ],
   "publishConfig": {
     "access": "public"
@@ -48,6 +49,8 @@
     "release": "changeset publish",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "gen:barrel": "node scripts/generate-barrel.mjs",
     "clean": "node scripts/clean.mjs",
     "build:js": "vite build --config vite.lib.config.js",
@@ -66,12 +69,17 @@
     "@changesets/cli": "^2.31.0",
     "@storybook/addon-docs": "^10.4.3",
     "@storybook/react-vite": "^10.4.3",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@vitejs/plugin-react": "^5.0.0",
+    "jsdom": "^29.1.1",
     "lefthook": "^2.1.9",
     "prettier": "^3.8.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "storybook": "^10.4.3",
-    "vite": "^7.0.0"
+    "vite": "^7.0.0",
+    "vitest": "^4.1.8"
   }
 }

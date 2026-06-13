@@ -15,7 +15,11 @@ pre-commit:
       run: npm run gen:barrel && git add src/index.js
 
 pre-push:
+  parallel: false # run the fast unit gate before the slower build
   commands:
+    # Unit gate — fail fast on a broken logic primitive (see TESTING.md).
+    test:
+      run: npm test
     # Catch a broken library build before it leaves the machine.
     build:
       run: npm run build:lib

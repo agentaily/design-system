@@ -11,7 +11,8 @@
 - **整页 shells / frames(活组件,非拷贝模板)** — `AppShell`、`DesignerShell`、`DocsLayout`、`SettingsPage`、`SignInPage`、`ConversationThread`。
 - **产品域图层** — auth(`AuthDialog` / `AccountControl` / `SignInPage`)、settings(`DeepSeekCard` / `FeishuCard` 纯展示连接卡 + `SecretField` / `StatusPill` / `TestRow` / `HelpSteps`)、review(`MarkupLayer` 点选式标注)、utilities(`Icon` 统一 Lucide 集、`BrandMark`、`RotatingTagline` 动画品牌标语)。
 - **对话消息 markdown 渲染** — `<Markdown>` 原语(全 GFM:段落/加粗/斜体/删除线/行内代码/代码块/有序·无序·嵌套·任务列表/引用块/表格列对齐/水平线/标题/链接 + 裸 URL;XSS 安全、流式半截容错、双主题);`<Message>` 正文接受 markdown 字符串(`markdown` prop 或字符串 children),React-node children 向后兼容。(#16)
-- **分发三渠道** — npm 包 `@agentaily/design-system`(ESM、每组件一模块、可 tree-shake)、托管 Storybook(GitHub Pages)、Agent Skill(`skill/SKILL.md`)。
+- **单元测试 gate(逻辑层起步)** — `vitest` + `@testing-library/react` + `jsdom`,首批覆盖 `<Markdown>`(XSS 净化 / 全 GFM 语法 / 流式半截容错,30 例);`npm test` 纳入 done-gate + lefthook pre-push。测试落 `tests/`(镜像组件之外,`design-sync` 不覆盖);重引 `implementer` agent 驱动内环。分层 / 护栏见 [TESTING.md](./TESTING.md)。(#18)
+- **分发三渠道** — npm 包 `@agentaily/design-system`(ESM、每组件一模块、可 tree-shake、含 `CHANGELOG.md`)、托管 Storybook(GitHub Pages)、Agent Skill(`skill/SKILL.md`)。
 - **全自动发版** — Changesets + GitHub Actions(Version PR → npm trusted publishing + GitHub Release)。(#1、#3)
 
 ## 进行中 (In progress)
