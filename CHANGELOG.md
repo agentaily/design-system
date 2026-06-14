@@ -1,5 +1,11 @@
 # @agentaily/design-system
 
+## 0.11.0
+
+### Minor Changes
+
+- [#29](https://github.com/agentaily/design-system/pull/29) [`046d799`](https://github.com/agentaily/design-system/commit/046d799cda885861df3c8bb8294d6665d7b68168) Thanks [@yarnovo](https://github.com/yarnovo)! - ConversationThread 透传 `onModelClick` 给内部 Composer:新增可选 prop `onModelClick?: () => void`,直接转发到内部 `<Composer>` 的模型 pill 点击回调。下游可直接拿到模型 pill 的点击回调去开模型选择菜单,不必再用 wrapper 截内部类 `.ax-composer__model`。纯新增 optional prop,向后兼容,其余 API 不变。
+
 ## 0.10.1
 
 ### Patch Changes
