@@ -1,6 +1,6 @@
 {
   "name": "@agentaily/design-system",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Agentaily design system — light-first monochrome React component library (119 components) + Storybook.",
   "type": "module",
   "license": "UNLICENSED",
