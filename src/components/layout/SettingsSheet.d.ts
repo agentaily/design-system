@@ -26,7 +26,7 @@ export interface SettingsSheetProps {
   open?: boolean;
   /** Close handler — forwarded to PanelSheet (renders ✕ + wires Esc). */
   onClose?: () => void;
-  /** Mono breadcrumb in the shell bar. @default "设置" */
+  /** Mono breadcrumb in the shell bar. DS is locale-agnostic — override to localize. @default "Settings" */
   crumb?: React.ReactNode;
   /** Right-of-bar slot (before ✕). */
   actions?: React.ReactNode;
@@ -34,7 +34,7 @@ export interface SettingsSheetProps {
   footer?: React.ReactNode;
   /** Section list for the left nav — strings or {id,label,icon}. Omit for a nav-less single column. */
   nav?: (SettingsNavItem | string)[];
-  /** Mono label above the nav. @default "设置" */
+  /** Mono label above the nav. DS is locale-agnostic — override to localize. @default "Settings" */
   navLabel?: string;
   /** Controlled active section id. Omit to let the component track it internally. */
   active?: string;

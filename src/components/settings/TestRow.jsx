@@ -3,7 +3,7 @@ import { Button } from "../buttons/Button.jsx";
 import { Icon } from "../utilities/Icon.jsx";
 import { Spinner } from "../feedback/Spinner.jsx";
 
-// TestRow — the "测试连接" footer for a connection card: an inline result that
+// TestRow — the "test connection" footer for a connection card: an inline result that
 // reflects four states (idle / testing / ok / error) next to a test button.
 const AX_TESTROW_CSS = `
 .ax-testrow { display: flex; align-items: center; gap: 14px; padding: 14px 24px; border-top: 1px solid var(--border-default);
@@ -26,25 +26,39 @@ if (typeof document !== "undefined" && !document.getElementById("ax-testrow-css"
   document.head.appendChild(s);
 }
 
+// Self-consistent English baseline. Pass `copy` (any subset) to localize; the
+// explicit `idleHint` / `testLabel` / `retestLabel` props still win when given.
+const DEFAULT_COPY = {
+  idle: "Not tested yet",
+  testing: "Handshaking…",
+  test: "Test connection",
+  retest: "Test again",
+};
+
 export function TestRow({
   status = "idle",
   result,
   onTest,
   disabled = false,
   idleHint,
-  testLabel = "测试连接",
-  retestLabel = "重新测试",
+  testLabel,
+  retestLabel,
+  copy,
 }) {
+  const c = { ...DEFAULT_COPY, ...copy };
+  const idleText = idleHint !== undefined ? idleHint : c.idle;
+  const testText = testLabel !== undefined ? testLabel : c.test;
+  const retestText = retestLabel !== undefined ? retestLabel : c.retest;
   return (
     <div className="ax-testrow">
       <div className={"ax-testrow__result is-" + status}>
-        {status === "idle" && <span>{idleHint || "尚未测试"}</span>}
+        {status === "idle" && <span>{idleText}</span>}
         {status === "testing" && (
           <>
             <span className="ax-testrow__spin">
               <Spinner size="sm" />
             </span>
-            <span>正在握手…</span>
+            <span>{c.testing}</span>
           </>
         )}
         {status === "ok" && (
@@ -67,7 +81,7 @@ export function TestRow({
         icon={<Icon name={status === "ok" ? "refresh" : "plug"} size={14} />}
         onClick={onTest}
       >
-        {status === "ok" ? retestLabel : testLabel}
+        {status === "ok" ? retestText : testText}
       </Button>
     </div>
   );

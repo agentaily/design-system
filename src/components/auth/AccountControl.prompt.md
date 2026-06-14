@@ -16,4 +16,16 @@ const { user, signOut } = AuthDialog.useAuth();
 />;
 ```
 
-Signed out shows a 登录 button; signed in shows a square avatar that opens a menu (email → your `items` → 退出登录). The email row is clickable — wire `onProfile` to open a profile/account screen.
+Signed out shows a sign-in button; signed in shows a square avatar that opens a menu (a "Signed in" label → the email → your `items` → a sign-out item). The email row is clickable — wire `onProfile` to open a profile/account screen.
+
+All chrome strings default to **English**. DS is locale-agnostic — pass `copy` to localize:
+
+```jsx
+<AccountControl
+  user={user}
+  onLogout={signOut}
+  copy={{ signIn: "登录", menuLabel: "账户菜单", signedIn: "已登录账户", signOut: "退出登录" }}
+/>
+```
+
+(Your `items` labels are your own content — pass them in whatever language you need. The single `signInLabel` prop, if given, wins over `copy.signIn`.)

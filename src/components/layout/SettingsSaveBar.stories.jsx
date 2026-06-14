@@ -102,3 +102,25 @@ export const Errored = {
     </Band>
   ),
 };
+
+// Strings default to English; pass `copy` to localize (here, zh-CN).
+export const Localized = {
+  render: () => (
+    <Band>
+      <SettingsSaveBar
+        dirty
+        copy={{
+          save: "保存",
+          reset: "放弃更改",
+          saving: "正在保存…",
+          saved: "已保存",
+          error: "保存失败，请重试",
+          cleanHint: "全部更改已保存",
+          dirtyHint: "有未保存的更改",
+        }}
+        onSave={() => {}}
+        onReset={() => {}}
+      />
+    </Band>
+  ),
+};

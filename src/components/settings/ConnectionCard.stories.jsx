@@ -82,3 +82,15 @@ export const AlwaysExpanded = {
     />
   ),
 };
+
+// Shell chrome defaults to English; pass `copy` (header summary + collapse label)
+// and `testCopy` (footer Test row) to localize — here, zh-CN.
+export const Localized = {
+  render: () => (
+    <Host
+      initial={{ token: "tok-demo123", status: "ok", result: "连接正常 · 延迟 0.3s" }}
+      copy={{ connected: "已连接", disconnected: "未连接", collapse: "收起" }}
+      testCopy={{ idle: "尚未测试", testing: "正在握手…", test: "测试连接", retest: "重新测试" }}
+    />
+  ),
+};

@@ -55,6 +55,15 @@ if (typeof document !== "undefined" && !document.getElementById("ax-conncard-css
   document.head.appendChild(s);
 }
 
+// Self-consistent English baseline for this shell's own chrome. DS is
+// locale-agnostic — pass `copy` (any subset) to localize. The footer TestRow's
+// strings are localized separately via `testCopy` (forwarded as its `copy`).
+const DEFAULT_COPY = {
+  connected: "Connected",
+  disconnected: "Not connected",
+  collapse: "Collapse",
+};
+
 export function ConnectionCard({
   icon,
   title,
@@ -69,8 +78,11 @@ export function ConnectionCard({
   collapsible = true,
   expanded,
   onExpandedChange,
+  copy,
+  testCopy,
   children,
 }) {
+  const c = { ...DEFAULT_COPY, ...copy };
   const [exp, setExp] = useState(undefined);
   const open = !collapsible
     ? true
@@ -86,7 +98,8 @@ export function ConnectionCard({
   };
 
   const tint = status === "ok" ? " is-ok" : status === "error" ? " is-error" : "";
-  const summary_ = summary != null ? summary : result || (status === "ok" ? "已连接" : "未连接");
+  const summary_ =
+    summary != null ? summary : result || (status === "ok" ? c.connected : c.disconnected);
   const iconNode = typeof icon === "string" ? <Icon name={icon} size={16} /> : icon;
 
   const Head = collapsible && !open ? "button" : "div";
@@ -112,7 +125,7 @@ export function ConnectionCard({
               type="button"
               className="ax-conncard__toggle"
               data-open="true"
-              aria-label="收起"
+              aria-label={c.collapse}
               onClick={() => setOpen(false)}
             >
               <Icon name="chevronDown" size={16} />
@@ -142,6 +155,7 @@ export function ConnectionCard({
               onTest={onTest}
               disabled={testDisabled}
               idleHint={idleHint}
+              copy={testCopy}
             />
           ) : null}
         </React.Fragment>

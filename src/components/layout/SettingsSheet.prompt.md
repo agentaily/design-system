@@ -43,11 +43,12 @@ function Settings({ onClose }) {
 }
 ```
 
+- **Locale-agnostic chrome.** `crumb` and `navLabel` default to **English** (`"Settings"`); pass your own (the example above passes zh-CN `crumb="设置"`). All `nav` labels and section content are your own strings.
 - **`nav`** draws the left section rail (strings or `{id,label,icon}`). Omit it for a single nav-less column.
 - **Fixed rail + scrolling content:** with `nav`, the header and the rail stay put while only the content pane scrolls (independent scroll regions).
 - **`footer`** is scoped to the **content pane** when `nav` is present — its left edge stops at the rail (not under it) and it justifies status-left / actions-right. With no `nav`, `footer` becomes a full-width PanelSheet footer aligned with the header.
 - **Gate the footer per section.** `footer` is SettingsSheet-level, so compute it from the active section — only the section that needs one shows a footer (`footer={tabs[active].footer}`); other sections render no footer.
-- **Per-tab save bar (the model).** Settings commit on an explicit 保存, not on edit (GitHub model). Put a `<SettingsSaveBar>` in the footer, scoped to the active tab — it pairs with `Form.useForm` for normal form tabs, or takes explicit `dirty`/`onSave` for non-form content like the connection section:
+- **Per-tab save bar (the model).** Settings commit on an explicit Save, not on edit (GitHub model). Put a `<SettingsSaveBar>` in the footer, scoped to the active tab — it pairs with `Form.useForm` for normal form tabs, or takes explicit `dirty`/`onSave` for non-form content like the connection section:
 
 ```jsx
 footer={<SettingsSaveBar form={tabForm} onSave={persist} />}        // a Form.useForm tab

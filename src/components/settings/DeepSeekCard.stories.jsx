@@ -95,3 +95,39 @@ export const MaskedStoredKey = {
     />
   ),
 };
+
+// Strings default to English; pass one `copy` object to localize the whole card
+// (header, field, help, and the Test row) — here, zh-CN.
+const ZH_COPY = {
+  title: "DeepSeek",
+  desc: "驱动对话式交互。用户发送的每一条消息，都通过这把密钥调用 DeepSeek 补全。",
+  connected: "已连接",
+  disconnected: "未连接",
+  collapse: "收起",
+  apiKeyLabel: "API KEY",
+  keyPlaceholder: "sk-xxxxxxxxxxxxxxxxxxxxxxxx",
+  maskedPlaceholder: "已保存 ········  ·  留空则保持不变",
+  maskedHint: "已存密钥 · 留空表示不修改，输入新值即覆盖",
+  idleHint: "填写密钥后测试连通性",
+  test: "测试连接",
+  retest: "重新测试",
+  testing: "正在握手…",
+  help: {
+    title: "如何获取 DeepSeek API Key？",
+    steps: [
+      <React.Fragment key="1">
+        登录 <code>platform.deepseek.com</code>，进入「API Keys」页面。
+      </React.Fragment>,
+      <React.Fragment key="2">
+        点击「创建 API Key」，命名后立即复制——密钥只在创建时完整显示一次。
+      </React.Fragment>,
+      <React.Fragment key="3">在「充值」中确认账户余额充足，对话才能持续调用。</React.Fragment>,
+      <React.Fragment key="4">
+        把以 <code>sk-</code> 开头的密钥粘贴到上方输入框。
+      </React.Fragment>,
+    ],
+    link: { href: "https://platform.deepseek.com", label: "打开 DeepSeek 开放平台" },
+  },
+};
+
+export const Localized = { render: () => <Host expanded copy={ZH_COPY} /> };
