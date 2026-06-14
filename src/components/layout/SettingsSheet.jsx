@@ -64,11 +64,11 @@ if (typeof document !== "undefined" && !document.getElementById("ax-ssheet-css")
 export function SettingsSheet({
   open = true,
   onClose,
-  crumb = "设置",
+  crumb = "Settings",
   actions,
   footer,
   nav = [],
-  navLabel = "设置",
+  navLabel = "Settings",
   active,
   onNavigate,
   label,
@@ -89,7 +89,7 @@ export function SettingsSheet({
     <PanelSheet
       open={open}
       crumb={crumb}
-      label={label || (typeof crumb === "string" ? crumb : "设置")}
+      label={label || (typeof crumb === "string" ? crumb : "Settings")}
       onClose={onClose}
       actions={actions}
       wrap={false}

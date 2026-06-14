@@ -29,8 +29,8 @@ function GeneralTab() {
 </SettingsSheet>
 ```
 
-- **`form`**: pass a `Form.useForm()` return. 保存 is disabled until `isDirty && isValid`, shows a spinner while `isSubmitting`, runs validation then your `onSave(values)` on click; 放弃更改 calls `form.reset()`.
-- **After a successful save**, call `form.reset(values)` so the saved values become the new clean baseline (the bar goes back to "全部更改已保存").
+- **`form`**: pass a `Form.useForm()` return. Save is disabled until `isDirty && isValid`, shows a spinner while `isSubmitting`, runs validation then your `onSave(values)` on click; the reset button calls `form.reset()`.
+- **After a successful save**, call `form.reset(values)` so the saved values become the new clean baseline (the bar goes back to the clean hint).
 
 ### A tab that isn't useForm-based (e.g. the connection section)
 
@@ -48,6 +48,7 @@ Drive it explicitly — track dirty yourself and pass `status` for feedback:
 ```
 
 - **Per tab, not per page.** Compute the footer from the active tab so each tab commits its own fields (`footer={tabs[active].footer}`). A tab with nothing to save passes `footer={null}`.
-- **`hideWhenClean`**: set true to only reveal the bar once the tab is dirty (the bar slides in on first edit). Default keeps it visible with 保存 disabled.
+- **Locale-agnostic.** All strings (`Save`, `Discard changes`, `Saving…`, `Saved`, the error/clean/dirty hints) default to **English**. Pass `copy={{ save, reset, saving, saved, error, cleanHint, dirtyHint }}` (any subset) to localize, or override a single label via the matching `saveLabel` / `resetLabel` / `cleanHint` / `dirtyHint` prop (those win over `copy`).
+- **`hideWhenClean`**: set true to only reveal the bar once the tab is dirty (the bar slides in on first edit). Default keeps it visible with Save disabled.
 - Layout matches the sheet footer: status fills left (aligns under the brand), actions pin right (align under the ✕).
 - **Guarding tab switches**: if a tab is dirty, the consumer should confirm before switching `active` — the bar reports dirty via your own state, so gate `onNavigate` on it.

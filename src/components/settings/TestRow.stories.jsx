@@ -28,7 +28,7 @@ const Frame = ({ children }) => (
 export const Idle = {
   render: () => (
     <Frame>
-      <TestRow status="idle" idleHint="填写密钥后测试连通性" disabled />
+      <TestRow status="idle" disabled />
     </Frame>
   ),
 };
@@ -53,6 +53,23 @@ export const Error = {
   render: () => (
     <Frame>
       <TestRow status="error" result="401 · 密钥无效" />
+    </Frame>
+  ),
+};
+
+// Strings default to English; pass `copy` to localize (here, zh-CN).
+export const Localized = {
+  render: () => (
+    <Frame>
+      <TestRow
+        status="idle"
+        copy={{
+          idle: "尚未测试",
+          testing: "正在握手…",
+          test: "测试连接",
+          retest: "重新测试",
+        }}
+      />
     </Frame>
   ),
 };

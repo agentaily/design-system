@@ -5,13 +5,34 @@
  * auto-save: edits stay local until 保存 is clicked.
  *
  * Pairs with `Form.useForm` — pass `form` and it reads `isDirty / isValid /
- * isSubmitting`, gates 保存 on dirty+valid, validates-then-commits on click, and
- * 放弃更改 calls `form.reset()`. For non-useForm content (e.g. the connection
- * cards), pass explicit `dirty` / `saving` / `status` / `onSave` / `onReset`.
+ * isSubmitting`, gates Save on dirty+valid, validates-then-commits on click, and
+ * the reset button calls `form.reset()`. For non-useForm content (e.g. the
+ * connection cards), pass explicit `dirty` / `saving` / `status` / `onSave` / `onReset`.
  *
  * Renders only the footer status + actions (via `<PanelFooter>`); the sticky
  * band comes from the sheet.
  */
+/**
+ * User-facing strings, merged over the English defaults. DS is locale-agnostic —
+ * pass `copy` to localize. The explicit label props (`saveLabel` / `resetLabel` /
+ * `cleanHint` / `dirtyHint` / `error`) still win over the matching copy field.
+ */
+export interface SettingsSaveBarCopy {
+  /** Save button. @default "Save" */
+  save?: string;
+  /** Reset/discard button. @default "Discard changes" */
+  reset?: string;
+  /** Left status while saving. @default "Saving…" */
+  saving?: string;
+  /** Left status after a successful save. @default "Saved" */
+  saved?: string;
+  /** Default error text when `status === "error"` and no `error` prop. @default "Couldn’t save — please retry" */
+  error?: string;
+  /** Left status when clean. @default "All changes saved" */
+  cleanHint?: string;
+  /** Left status when dirty. @default "Unsaved changes" */
+  dirtyHint?: string;
+}
 export interface SettingsSaveBarProps {
   /** A `Form.useForm()` return. When given, dirty/valid/submitting + reset + validated submit are wired automatically. */
   form?: {
@@ -29,23 +50,25 @@ export interface SettingsSaveBarProps {
   saving?: boolean;
   /** Explicit status for the left text. @default derived */
   status?: "idle" | "saving" | "saved" | "error";
-  /** Error text shown when `status === "error"`. */
+  /** Error text shown when `status === "error"`. Overrides `copy.error`. */
   error?: string;
   /** Commit handler. With `form` it receives validated `values`; otherwise called bare. */
   onSave?: (values?: any) => void | Promise<void>;
   /** Revert handler (runs in addition to `form.reset()` when `form` is present). */
   onReset?: () => void;
-  /** @default "保存" */
+  /** Save button label. Overrides `copy.save`. @default copy.save ("Save") */
   saveLabel?: string;
-  /** @default "放弃更改" */
+  /** Reset button label. Overrides `copy.reset`. @default copy.reset ("Discard changes") */
   resetLabel?: string;
-  /** Left text when clean. @default "全部更改已保存" */
+  /** Left text when clean. Overrides `copy.cleanHint`. @default copy.cleanHint ("All changes saved") */
   cleanHint?: string;
-  /** Left text when dirty. @default "有未保存的更改" */
+  /** Left text when dirty. Overrides `copy.dirtyHint`. @default copy.dirtyHint ("Unsaved changes") */
   dirtyHint?: string;
+  /** Localizable strings, merged over the English defaults. */
+  copy?: SettingsSaveBarCopy;
   /** Render nothing while clean (the bar only appears once the tab is dirty/saving/errored). @default false */
   hideWhenClean?: boolean;
-  /** Show the 放弃更改 button. @default true (when `form` or `onReset` is available) */
+  /** Show the reset/discard button. @default true (when `form` or `onReset` is available) */
   showReset?: boolean;
 }
 export declare function SettingsSaveBar(props: SettingsSaveBarProps): JSX.Element | null;

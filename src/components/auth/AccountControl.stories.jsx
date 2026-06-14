@@ -25,3 +25,20 @@ export const SignedIn = {
     />
   ),
 };
+
+// Chrome strings default to English; pass `copy` to localize (here, zh-CN).
+export const Localized = {
+  render: () => (
+    <AccountControl
+      user={{ email: "designer@agentaily.chat", name: "Designer" }}
+      items={items}
+      onLogout={() => {}}
+      copy={{
+        signIn: "登录",
+        menuLabel: "账户菜单",
+        signedIn: "已登录账户",
+        signOut: "退出登录",
+      }}
+    />
+  ),
+};

@@ -115,6 +115,16 @@ import {
 
 Migrating from a hand-rolled overlay? Delete any local `.s-overlay / .s-modal / .s-wrap` shell CSS and mount `<PanelSheet>`; compose the 集成 section yourself as a `<PageSection>` holding the connection cards — the old all-in-one `IntegrationSettings` and the `FeishuCard` were removed, so you own the config + persistence + Save (via the footer's `SettingsSaveBar`); for "save instantly" instead, skip `SettingsSaveBar` and persist in `onChange`.
 
+**Locale-agnostic copy (the settings/account components are headless).** The DS ships **no i18n** — these components no longer hardcode Chinese; every user-facing string now **defaults to English** and is overridable via a `copy` prop (the same `DEFAULT_COPY` idiom as `SignInPage` / `AuthDialog`). Affected: `DeepSeekCard` · `ConnectionCard` · `TestRow` · `SettingsSaveBar` · `AccountControl` (each takes `copy`), and `SettingsSheet` (`crumb` / `navLabel` default to `"Settings"`). **A Chinese-locale product must pass `copy` (e.g. via your `L()` helper) or it will show the English defaults.** `DeepSeekCard`'s `copy` threads down through `ConnectionCard` → `TestRow`, so one object localizes the whole card:
+
+```jsx
+<DeepSeekCard {...deepSeekProps} copy={zh ? { title: "DeepSeek", desc: "驱动对话式交互…", connected: "已连接", disconnected: "未连接", apiKeyLabel: "API KEY", idleHint: "填写密钥后测试连通性", test: "测试连接", retest: "重新测试", testing: "正在握手…", help: { /* … */ } } : undefined} />
+<SettingsSaveBar /* … */ copy={zh ? { save: "保存", reset: "放弃更改", saving: "正在保存…", saved: "已保存", cleanHint: "全部更改已保存", dirtyHint: "有未保存的更改" } : undefined} />
+<AccountControl user={user} copy={zh ? { signIn: "登录", menuLabel: "账户菜单", signedIn: "已登录账户", signOut: "退出登录" } : undefined} />
+```
+
+Each component's `.prompt.md` lists its full `copy` key set. (`StatusPill`'s badge text still defaults to zh — localize it via its existing `labels` prop; a forwarded seam is a follow-up.)
+
 ### Auth (full-page email verification)
 
 `SignInPage` (sign-in / sign-up) and `VerifyEmailPage` are the split-brand auth pages; `AuthDialog` is the modal sibling. `VerifyEmailPage` owns **only** the `verifying → ok / error` flow — it never validates the token, writes a session, shows a toast, or navigates. You inject the effects and keep the real validation, persistence, and the (open-redirect-guarded) redirect decision in your product.

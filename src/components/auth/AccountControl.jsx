@@ -4,7 +4,7 @@ import { Button } from "../buttons/Button.jsx";
 import { DropdownMenu } from "../overlay/DropdownMenu.jsx";
 import { Icon } from "../utilities/Icon.jsx";
 
-// AccountControl — top-bar account affordance. Signed out: a "登录" button.
+// AccountControl — top-bar account affordance. Signed out: a sign-in button.
 // Signed in: an avatar that opens a dropdown (email, custom items, sign out).
 const AX_ACCOUNT_CSS = `
 .am-acct { appearance: none; border: none; background: none; padding: 0; cursor: pointer;
@@ -20,18 +20,30 @@ if (typeof document !== "undefined" && !document.getElementById("ax-account-css"
   document.head.appendChild(s);
 }
 
+// Self-consistent English baseline. DS is locale-agnostic — pass `copy` (any
+// subset) to localize. The explicit `signInLabel` prop still wins over copy.signIn.
+const DEFAULT_COPY = {
+  signIn: "Sign in",
+  menuLabel: "Account menu",
+  signedIn: "Signed in",
+  signOut: "Sign out",
+};
+
 export function AccountControl({
   user,
   onLogin,
   onLogout,
   onProfile,
   items = [],
-  signInLabel = "登录",
+  signInLabel,
+  copy,
 }) {
+  const c = { ...DEFAULT_COPY, ...copy };
+  const signInText = signInLabel !== undefined ? signInLabel : c.signIn;
   if (!user) {
     return (
       <Button variant="ghost" icon={<Icon name="user" size={14} />} onClick={onLogin}>
-        {signInLabel}
+        {signInText}
       </Button>
     );
   }
@@ -39,12 +51,12 @@ export function AccountControl({
     <DropdownMenu
       align="end"
       trigger={
-        <button className="am-acct" aria-label="账户菜单">
+        <button className="am-acct" aria-label={c.menuLabel}>
           <Avatar name={user.name || user.email} size="sm" />
         </button>
       }
       items={[
-        { type: "label", label: "已登录账户" },
+        { type: "label", label: c.signedIn },
         {
           label: user.email,
           icon: <Icon name="mail" size={15} />,
@@ -53,7 +65,7 @@ export function AccountControl({
         ...(items.length ? [{ type: "separator" }, ...items] : []),
         { type: "separator" },
         {
-          label: "退出登录",
+          label: c.signOut,
           icon: <Icon name="logout" size={15} />,
           danger: true,
           onSelect: onLogout,

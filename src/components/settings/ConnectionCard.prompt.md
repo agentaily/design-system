@@ -32,4 +32,5 @@ function SlackCard({ token, onTokenChange, status, result, onTest, masked }) {
 - **Collapse:** connected (`status === "ok"`) → starts collapsed to the header row; collapsed = whole row clicks to expand, expanded = chevron button collapses. Control with `expanded` / `onExpandedChange`.
 - **`icon`** takes an Icon name or a node; **`summary`** overrides the collapsed one-liner (defaults to `result`).
 - **`showTest={false}`** drops the Test footer for connectors that don't probe.
+- **Locale-agnostic.** The shell's own chrome defaults to English (collapsed `Connected` / `Not connected` summary, the collapse aria-label). Pass `copy={{ connected, disconnected, collapse }}` to localize. Localize the footer Test row separately via `testCopy` (forwarded as the TestRow `copy`): `testCopy={{ idle, testing, test, retest }}`. The `title` / `desc` / `idleHint` / field placeholders are your own content — pass them in whatever language you need (the examples above show zh-CN content).
 - Surface (bg / border / radius) comes from `<Card>`; this adds overflow + tint + the bands. Shell classes live here under `ax-conncard-css` — a single source (no per-card mirroring).

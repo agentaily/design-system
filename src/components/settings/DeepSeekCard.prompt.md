@@ -69,7 +69,36 @@ function IntegrationsScreen({ initial, onClose }) {
 ```
 
 - **Pure display:** the card resets nothing on its own. Clear a green pill by setting `status: "idle"` from your change handler (shown above).
-- **`masked`:** while true and `apiKey` is empty, the field shows "已保存… 留空则保持不变" and still lets the user Test; the mask is never echoed back. Typing overrides it.
+- **`masked`:** while true and `apiKey` is empty, the field shows the masked placeholder + "leave blank to keep" hint and still lets the user Test; the mask is never echoed back. Typing overrides it.
 - **`keyError`:** render a backend/validation error directly under the key field.
-- **`help`:** pass `{ title, steps, link }` (or a ready node) to override the default "如何获取 DeepSeek API Key" guide.
+- **`help`:** pass `{ title, steps, link }` (or a ready node) to override the default "how to get a key" guide.
 - The card never gates Save and never reports readiness — those are caller rules (`allReady` above).
+
+### Locale-agnostic (`copy`)
+
+Every user-facing string defaults to **English** (title, description, the `Connected`/`Not connected` summary, field label + placeholders + hint, and the Test row). DS ships no i18n — pass a `copy` object (any subset, deep-merged over the defaults) to localize. It is forwarded down to the `ConnectionCard` shell and its `TestRow`, so **one object covers the whole card**:
+
+```jsx
+<DeepSeekCard
+  apiKey={cfg.dsKey}
+  status={cfg.dsStatus}
+  onTest={testDeepSeek}
+  copy={{
+    title: "DeepSeek",
+    desc: "驱动对话式交互。用户发送的每一条消息，都通过这把密钥调用 DeepSeek 补全。",
+    connected: "已连接",
+    disconnected: "未连接",
+    apiKeyLabel: "API KEY",
+    keyPlaceholder: "sk-xxxxxxxxxxxxxxxxxxxxxxxx",
+    maskedPlaceholder: "已保存 ········  ·  留空则保持不变",
+    maskedHint: "已存密钥 · 留空表示不修改，输入新值即覆盖",
+    idleHint: "填写密钥后测试连通性",
+    test: "测试连接",
+    retest: "重新测试",
+    testing: "正在握手…",
+    help: { title: "如何获取 DeepSeek API Key？", steps: […], link: { href, label } },
+  }}
+/>
+```
+
+The explicit `help` / `idleHint` props still win over `copy.help` / `copy.idleHint` when both are passed. (The `StatusPill` badge text inside the card is **not** covered by `copy` yet — it keeps its own zh-CN defaults; localizing it is a follow-up.)
