@@ -5,11 +5,11 @@
 ## 已完成 (Shipped)
 
 - **Foundations** — 双主题单色 tokens(**亮色 paper 优先**,`:root` 默认;暗色 ink 走 `[data-theme="dark"]`)、Space Grotesk + JetBrains Mono、4px 间距栅格、硬边圆角(2/4/8px)、品牌母题(光标 ▍ / 点阵 / 角标刻线 / mono ALL-CAPS)。布局尺寸 token `--topbar-h` / `--bar-h`。(`src/tokens`、`src/foundations`)
-- **组件库 — 119 个组件 / 15 个类别**:buttons · inputs · display · feedback · overlay · layout · chat · ai · code · voice · workflow · utilities,加产品域 **settings · auth · review**。每个组件 ship `.jsx` + `.d.ts`(props 契约)+ `.prompt.md`(用法)+ `.stories.jsx`。
+- **组件库 — 120 个组件 / 15 个类别**:buttons · inputs · display · feedback · overlay · layout · chat · ai · code · voice · workflow · utilities,加产品域 **settings · auth · review**。每个组件 ship `.jsx` + `.d.ts`(props 契约)+ `.prompt.md`(用法)+ `.stories.jsx`。
 - **生产级表单层** — `Form` / `FormActions` + 可选的 `Form.useForm` / `Form.useFieldArray`(RHF 对齐,零依赖)。(#2)
-- **无头 hooks(逻辑层)** — `Queue.useQueue`、`AuthDialog.useAuth`、`Form.useForm` / `useFieldArray`,作为静态属性挂在配对组件上,状态归调用方持有。
-- **整页 shells / frames(活组件,非拷贝模板)** — `AppShell`、`DesignerShell`、`DocsLayout`、`SignInPage`、`ConversationThread`,以及**设置链**:`PanelSheet`(全屏上浮浮层外壳)→ `SettingsSheet`(基于它的浮动设置页:左导航 + 右内容),配套 `PanelFooter`(页脚内容)、`SettingsSaveBar`(每 tab 显式保存条)、`PageSection`(通用分区头部,别名 `SettingsSection`)。
-- **产品域图层** — auth(`AuthDialog` / `AccountControl`〔邮箱行可点跳转 `onProfile`〕 / `SignInPage`)、settings(`ConnectionCard` 连接卡共享外壳〔基于底层 `Card`〕→ `DeepSeekCard` 纯展示连接卡,配 `SecretField` / `StatusPill` / `TestRow` / `HelpSteps`)、review(`MarkupLayer` 点选式标注)、utilities(`Icon` 统一 Lucide 集、`BrandMark`、`RotatingTagline` 动画品牌标语)。
+- **无头 hooks(逻辑层)** — `Queue.useQueue`、`AuthDialog.useAuth`、`VerifyEmailPage.useVerify`、`Form.useForm` / `useFieldArray`,作为静态属性挂在配对组件上,状态归调用方持有。
+- **整页 shells / frames(活组件,非拷贝模板)** — `AppShell`、`DesignerShell`、`DocsLayout`、`SignInPage`、`VerifyEmailPage`、`ConversationThread`,以及**设置链**:`PanelSheet`(全屏上浮浮层外壳)→ `SettingsSheet`(基于它的浮动设置页:左导航 + 右内容),配套 `PanelFooter`(页脚内容)、`SettingsSaveBar`(每 tab 显式保存条)、`PageSection`(通用分区头部,别名 `SettingsSection`)。
+- **产品域图层** — auth(`AuthDialog` / `AccountControl`〔邮箱行可点跳转 `onProfile`〕 / `SignInPage` / `VerifyEmailPage`〔整页邮箱验证:`verifying → ok / error` 状态机 + `useVerify`,失败不自动跳、成功倒计时返回、重发带冷却〕)、settings(`ConnectionCard` 连接卡共享外壳〔基于底层 `Card`〕→ `DeepSeekCard` 纯展示连接卡,配 `SecretField` / `StatusPill` / `TestRow` / `HelpSteps`)、review(`MarkupLayer` 点选式标注)、utilities(`Icon` 统一 Lucide 集、`BrandMark`、`RotatingTagline` 动画品牌标语)。
 - **对话消息 markdown 渲染** — `<Markdown>` 原语(全 GFM:段落/加粗/斜体/删除线/行内代码/代码块/有序·无序·嵌套·任务列表/引用块/表格列对齐/水平线/标题/链接 + 裸 URL;XSS 安全、流式半截容错、双主题);`<Message>` 正文接受 markdown 字符串(`markdown` prop 或字符串 children),React-node children 向后兼容。(#16)
 - **单元测试 gate(逻辑层起步)** — `vitest` + `@testing-library/react` + `jsdom`,首批覆盖 `<Markdown>`(XSS 净化 / 全 GFM 语法 / 流式半截容错,30 例);`npm test` 纳入 done-gate + lefthook pre-push。测试落 `tests/`(镜像组件之外,`design-sync` 不覆盖);重引 `implementer` agent 驱动内环。分层 / 护栏见 [TESTING.md](./TESTING.md)。(#18)
 - **分发三渠道** — npm 包 `@agentaily/design-system`(ESM、每组件一模块、可 tree-shake、含 `CHANGELOG.md`)、托管 Storybook(GitHub Pages)、Agent Skill(`skill/SKILL.md`)。

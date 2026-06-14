@@ -22,6 +22,7 @@ export * from "./components/ai/ToolCall.jsx";
 export * from "./components/auth/AccountControl.jsx";
 export * from "./components/auth/AuthDialog.jsx";
 export * from "./components/auth/SignInPage.jsx";
+export * from "./components/auth/VerifyEmailPage.jsx";
 
 // buttons
 export * from "./components/buttons/Button.jsx";

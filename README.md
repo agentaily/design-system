@@ -1,6 +1,6 @@
 # agentaily design system
 
-Agentaily(AI chatbot)设计系统:119 个 React 组件 + Storybook,单色亮色优先(暗色可切)。品牌一句话:**极客风格,简约,大气,科技感**。
+Agentaily(AI chatbot)设计系统:120 个 React 组件 + Storybook,单色亮色优先(暗色可切)。品牌一句话:**极客风格,简约,大气,科技感**。
 
 📖 **在线 Storybook:** https://agentaily.github.io/design-system/
 
@@ -28,7 +28,7 @@ npm run build:lib   # 产出 dist/:每组件一个 .js + index.d.ts + styles.css
 
 | 路径                                            | 内容                                      |
 | ----------------------------------------------- | ----------------------------------------- |
-| `dist/index.js`                                 | ESM 入口,re-export 全部 119 个组件符号    |
+| `dist/index.js`                                 | ESM 入口,re-export 全部 120 个组件符号    |
 | `dist/components/**/*.js`                       | 每个组件独立模块(含运行时 CSS 注入)       |
 | `dist/index.d.ts` + `dist/components/**/*.d.ts` | TypeScript 类型契约                       |
 | `dist/styles.css`                               | 内联好的 tokens + 字体,消费方 import 一次 |
