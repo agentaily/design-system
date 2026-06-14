@@ -22,7 +22,7 @@ import "@agentaily/design-system/styles.css"; // once, at the app root — loads
 import { Button, Composer, Reasoning } from "@agentaily/design-system";
 ```
 
-- **119 components across 15 categories** — buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities, plus the product-domain layers **settings, auth, review**. Compose them; never re-implement a primitive.
+- **120 components across 15 categories** — buttons, inputs, display, feedback, overlay, layout, chat, ai, code, voice, workflow, utilities, plus the product-domain layers **settings, auth, review**. Compose them; never re-implement a primitive.
 - **Find a component and its props:** browse the Storybook (every variant/state is a story); TypeScript contracts ship with the package (`.d.ts`).
 - Light theme (`paper`) is the default (on `:root`). For dark, set `data-theme="dark"` on a wrapping element (e.g. `<html data-theme="dark">`).
 
@@ -48,7 +48,7 @@ const form = Form.useForm({ initialValues: { email: "" }, mode: "onBlur" });
 
 ### Page shells & frames
 
-Full-page layouts are **live components**, not copy-templates — every region is a slot, so you fill content and the chrome stays in sync on package upgrades. `AppShell` (sidebar + topbar + content), `DesignerShell` (two-pane chat/preview, draggable divider), `DocsLayout` (nav · article · TOC), `SettingsSheet` (floating settings page: left section nav + content, built on the full-screen `PanelSheet` overlay shell — see **Settings** below), and `SignInPage` (split-brand auth page). Bar heights are tokens (`--topbar-h` / `--bar-h`) so panes line up.
+Full-page layouts are **live components**, not copy-templates — every region is a slot, so you fill content and the chrome stays in sync on package upgrades. `AppShell` (sidebar + topbar + content), `DesignerShell` (two-pane chat/preview, draggable divider), `DocsLayout` (nav · article · TOC), `SettingsSheet` (floating settings page: left section nav + content, built on the full-screen `PanelSheet` overlay shell — see **Settings** below), `SignInPage` (split-brand auth page), and `VerifyEmailPage` (split-brand full-page email verification — `verifying → ok / error` state machine; inject `verifyToken`/`onResend`, see **Auth** below). Bar heights are tokens (`--topbar-h` / `--bar-h`) so panes line up.
 
 ```jsx
 import { AppShell, AccountControl, Icon } from "@agentaily/design-system";
@@ -115,12 +115,43 @@ import {
 
 Migrating from a hand-rolled overlay? Delete any local `.s-overlay / .s-modal / .s-wrap` shell CSS and mount `<PanelSheet>`; compose the 集成 section yourself as a `<PageSection>` holding the connection cards — the old all-in-one `IntegrationSettings` and the `FeishuCard` were removed, so you own the config + persistence + Save (via the footer's `SettingsSaveBar`); for "save instantly" instead, skip `SettingsSaveBar` and persist in `onChange`.
 
+### Auth (full-page email verification)
+
+`SignInPage` (sign-in / sign-up) and `VerifyEmailPage` are the split-brand auth pages; `AuthDialog` is the modal sibling. `VerifyEmailPage` owns **only** the `verifying → ok / error` flow — it never validates the token, writes a session, shows a toast, or navigates. You inject the effects and keep the real validation, persistence, and the (open-redirect-guarded) redirect decision in your product.
+
+```jsx
+import { VerifyEmailPage } from "@agentaily/design-system";
+
+<VerifyEmailPage
+  email="lin@agentaily.dev"
+  returnTo={{ label: "your workspace", href: "/app" }}
+  verifyToken={async () => {
+    const res = await fetch("/api/verify?token=" + token);
+    if (!res.ok) throw new Error("This link has expired."); // reject/throw/network → error
+    // success: persist the session HERE, then resolve
+  }}
+  onResend={() => fetch("/api/verify/resend", { method: "POST" })}
+  onContinue={(rt) => {
+    location.href = isSameOrigin(rt?.href) ? rt.href : "/app";
+  }} // YOU guard the redirect
+  onBackToSignIn={() => navigate("/signin")}
+  copy={
+    {
+      /* every string is localizable, shallow-merged per group */
+    }
+  }
+/>;
+```
+
+Hard rules the component enforces (so products can't get them wrong): the **error** state never auto-redirects; **success** counts down (`redirectDelay`, default 5s; `noRedirect` turns it off) then calls `onContinue(returnTo)`; **resend** is cooldown-gated + idempotent + confirms in place, with a "resend ≠ verified" reminder. Pass `status` (+ optional `error`) to drive the machine yourself, or use the headless `VerifyEmailPage.useVerify({ verifyToken })` (see below) with your own UI.
+
 ### Headless hooks (logic without UI)
 
 Some logic ships as a **headless hook**, exposed as a static on the component it pairs with (mirroring `Form.useForm`). The hook owns state; the caller injects it, so one piece of state can drive UI in several places.
 
 - `Queue.useQueue({ onFirst, onBatch })` → `{ queue, busy, enqueue, remove, reset }` — keep-sending-while-busy buffer; pair with `<ConversationThread controller={q} />` (pure-render chat surface).
 - `AuthDialog.useAuth(storageKey?)` → `{ user, signIn, signOut }` — localStorage-persisted session; pair with `<AuthDialog>` + `<AccountControl>`.
+- `VerifyEmailPage.useVerify({ verifyToken })` → `{ status, error, retry }` — runs an injected token check into a `verifying → ok / error` machine (reject/throw/network → `error`, never a silent hang); pair with `<VerifyEmailPage>` or bring your own UI.
 
 ```jsx
 import { ConversationThread, Queue } from "@agentaily/design-system";
