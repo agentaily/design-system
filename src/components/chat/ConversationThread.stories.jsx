@@ -27,6 +27,7 @@ function ThreadDemo({ seed = [] }) {
         draft={draft}
         onDraftChange={setDraft}
         hints={["做一个活动报名表", "加一个邮箱字段", "把标题字号调大"]}
+        onModelClick={() => console.log("[ConversationThread] model pill clicked")}
       />
     </div>
   );
