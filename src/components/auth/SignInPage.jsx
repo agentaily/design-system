@@ -235,6 +235,7 @@ export function SignInPage({
               </div>
               <Input
                 type="password"
+                reveal
                 autoComplete={isSignup ? "new-password" : "current-password"}
                 placeholder={isSignup ? ph.passwordNew : ph.password}
                 value={pwV}
@@ -246,6 +247,7 @@ export function SignInPage({
               <Input
                 label={labels.confirm}
                 type="password"
+                reveal
                 autoComplete="new-password"
                 placeholder={ph.confirm}
                 value={confirm}

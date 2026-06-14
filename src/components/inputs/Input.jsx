@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { Icon } from "../utilities/Icon.jsx";
 
 const AX_FIELD_CSS = `
 .ax-field { display: flex; flex-direction: column; gap: 6px; }
@@ -44,6 +45,18 @@ const AX_FIELD_CSS = `
 }
 .ax-field__hint { font-size: var(--text-xs); color: var(--text-faint); }
 .ax-field__hint--error { color: var(--danger); }
+/* Show/hide affordance for masked fields — mirrors SecretField's eye button so
+   password reveal looks identical wherever it appears. */
+.ax-field__control { position: relative; display: block; }
+.ax-field__control .ax-input { padding-right: 40px; }
+.ax-field__reveal {
+  position: absolute; right: 6px; bottom: 6px; width: 24px; height: 24px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: none; cursor: pointer; color: var(--text-faint);
+  border-radius: var(--radius-1);
+  transition: color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
+}
+.ax-field__reveal:hover { color: var(--text-body); background: var(--surface-raised); }
 `;
 
 if (typeof document !== "undefined" && !document.getElementById("ax-field-css")) {
@@ -59,12 +72,19 @@ export function Input({
   error,
   required = false,
   mono = false,
+  reveal = false,
   className = "",
+  type = "text",
   ...rest
 }) {
+  const [show, setShow] = useState(false);
+  // Opt-in show/hide eye — only meaningful on a masked password field.
+  const canReveal = reveal && type === "password";
+  const inputType = canReveal && show ? "text" : type;
   const cls = ["ax-input", mono ? "ax-input--mono" : "", error ? "ax-input--error" : "", className]
     .filter(Boolean)
     .join(" ");
+  const control = <input className={cls} required={required} type={inputType} {...rest} />;
   return (
     <label className="ax-field">
       {label ? (
@@ -73,7 +93,25 @@ export function Input({
           {required ? <span className="ax-field__req">*</span> : null}
         </span>
       ) : null}
-      <input className={cls} required={required} {...rest} />
+      {canReveal ? (
+        <span className="ax-field__control">
+          {control}
+          <button
+            type="button"
+            className="ax-field__reveal"
+            tabIndex={-1}
+            aria-label={show ? "隐藏密码" : "显示密码"}
+            aria-pressed={show}
+            title={show ? "隐藏密码" : "显示密码"}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => setShow((s) => !s)}
+          >
+            <Icon name={show ? "eyeOff" : "eye"} size={15} />
+          </button>
+        </span>
+      ) : (
+        control
+      )}
       {error ? (
         <span className="ax-field__hint ax-field__hint--error">{error}</span>
       ) : hint ? (
