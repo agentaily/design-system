@@ -57,6 +57,7 @@ export function ConversationThread({
   hints = [],
   onHint,
   emptyTitle = "有什么要解决的？",
+  onModelClick,
   placeholder = "Message Agentaily…",
   busyPlaceholder = "可继续输入，会收进缓冲区一起处理…",
   note = "AGENTAILY MAY MAKE MISTAKES · VERIFY CRITICAL OUTPUT",
@@ -165,6 +166,7 @@ export function ConversationThread({
             disabled={disabled}
             placeholder={busy ? busyPlaceholder : placeholder}
             model={model}
+            onModelClick={onModelClick}
           />
           {note ? <p className="ax-cthread__note">{note}</p> : null}
         </div>

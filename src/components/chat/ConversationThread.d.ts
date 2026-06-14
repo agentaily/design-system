@@ -30,6 +30,12 @@ export interface ConversationThreadProps {
   title?: string;
   /** Model chip + Composer model label. @default "agentaily-2" */
   model?: string;
+  /**
+   * Fired when the Composer's model pill is clicked. Passed straight through to
+   * the inner Composer / model selector, so downstream can open a model menu
+   * without reaching into the internal `.ax-composer__model` class.
+   */
+  onModelClick?: () => void;
   /** Header right-side actions (share/settings…). */
   actions?: React.ReactNode;
   messages?: ThreadMessage[];
