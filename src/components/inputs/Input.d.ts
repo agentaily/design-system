@@ -12,6 +12,8 @@ export interface InputProps {
   required?: boolean;
   /** Use the mono font for the value (ids, keys, code). @default false */
   mono?: boolean;
+  /** For type="password": render a show/hide eye toggle inside the field. @default false */
+  reveal?: boolean;
   placeholder?: string;
   value?: string;
   disabled?: boolean;

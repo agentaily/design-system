@@ -59,6 +59,32 @@ export const Controlled = {
   },
 };
 
+export const PasswordReveal = {
+  render: () => {
+    const [pw, setPw] = React.useState("hunter2");
+    return (
+      <div style={{ width: 320, display: "flex", flexDirection: "column", gap: 16 }}>
+        <Input
+          label="Password"
+          type="password"
+          reveal
+          placeholder="••••••••"
+          value={pw}
+          onChange={(e) => setPw(e.target.value)}
+          hint="Click the eye to show / hide."
+        />
+        <Input
+          label="Confirm password"
+          type="password"
+          reveal
+          placeholder="Re-enter your password"
+          defaultValue=""
+        />
+      </div>
+    );
+  },
+};
+
 export const Required = {
   render: () => {
     const [name, setName] = React.useState("");
