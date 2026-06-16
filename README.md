@@ -26,19 +26,33 @@ npm run build:lib   # 产出 dist/:每组件一个 .js + index.d.ts + styles.css
 
 产物结构:
 
-| 路径                                            | 内容                                      |
-| ----------------------------------------------- | ----------------------------------------- |
-| `dist/index.js`                                 | ESM 入口,re-export 全部 120 个组件符号    |
-| `dist/components/**/*.js`                       | 每个组件独立模块(含运行时 CSS 注入)       |
-| `dist/index.d.ts` + `dist/components/**/*.d.ts` | TypeScript 类型契约                       |
-| `dist/styles.css`                               | 内联好的 tokens + 字体,消费方 import 一次 |
-| `dist/assets/logo/*.svg`                        | 品牌 mark                                 |
+| 路径                                            | 内容                                            |
+| ----------------------------------------------- | ----------------------------------------------- |
+| `dist/index.js`                                 | ESM 入口,re-export 全部 120 个组件符号 + 运行时 |
+| `dist/components/**/*.js`                       | 每个组件独立模块(含运行时 CSS 注入)             |
+| `dist/runtime/**/*.js` + `.d.ts`                | 非视觉浏览器运行时(theme / i18n / 持久化)       |
+| `dist/index.d.ts` + `dist/components/**/*.d.ts` | TypeScript 类型契约                             |
+| `dist/styles.css`                               | 内联好的 tokens + 字体,消费方 import 一次       |
+| `dist/assets/logo/*.svg`                        | 品牌 mark                                       |
 
 消费方用法:
 
 ```jsx
 import "@agentaily/design-system/styles.css"; // 一次,加载 tokens
 import { Button, Composer, Reasoning } from "@agentaily/design-system";
+```
+
+包还 ship **非视觉浏览器运行时**(从 `@agentaily/web-kit` 移植,web-kit 即将弃用):主题切换、国际化、跨子域偏好持久化 —— 代码在 `src/runtime/{theme,i18n,persistence}/`(手写非镜像)。
+
+```jsx
+import {
+  ThemeProvider, // 解析主题并写到 <html data-theme>,组件 token 据此切换暗色
+  useTheme,
+  themeInitScript, // <head> 内联防 FOUC,XSS 安全
+  createI18n, // 工厂:机制共享、各产品注入 catalogs
+  createStorage, // 默认跨 .agentaily.com 子域 cookie,SSR/隐私模式静默降级
+  persistentState,
+} from "@agentaily/design-system";
 ```
 
 **版本与发布走 [Changesets](https://github.com/changesets/changesets)**:
