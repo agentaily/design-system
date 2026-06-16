@@ -15,10 +15,11 @@
 - **单元测试 gate(逻辑层起步)** — `vitest` + `@testing-library/react` + `jsdom`,首批覆盖 `<Markdown>`(XSS 净化 / 全 GFM 语法 / 流式半截容错,30 例);`npm test` 纳入 done-gate + lefthook pre-push。测试落 `tests/`(镜像组件之外,`design-sync` 不覆盖);重引 `implementer` agent 驱动内环。分层 / 护栏见 [TESTING.md](./TESTING.md)。(#18)
 - **分发三渠道** — npm 包 `@agentaily/design-system`(ESM、每组件一模块、可 tree-shake、含 `CHANGELOG.md`)、托管 Storybook(GitHub Pages)、Agent Skill(`skill/SKILL.md`)。
 - **全自动发版** — Changesets + GitHub Actions(Version PR → npm trusted publishing + GitHub Release)。(#1、#3)
+- **非视觉浏览器运行时(吸收 web-kit)** — 从 `@agentaily/web-kit` 移植 theme / i18n / 跨子域持久化进 `src/runtime/{theme,i18n,persistence}/`,从主 barrel 导出 `ThemeProvider` / `useTheme` / `themeInitScript` / `createI18n` / `createStorage` / `persistentState`。手写非镜像代码,配单测(`tests/runtime-*`);纯加法、`react`/`react-dom` 仍 peerDeps。为弃用 web-kit、把共享代码收敛到唯一上游 DS 铺路。(#39)
 
 ## 进行中 (In progress)
 
-- 暂无。
+- **弃用 `@agentaily/web-kit`** — 运行时已吸收进 DS(上一条)。下一步:下游(form-design-website / official-website / form-design)改指 DS 的运行时导出,再 deprecate web-kit 包。
 
 ## 待办 (Backlog)
 

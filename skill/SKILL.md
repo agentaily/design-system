@@ -187,6 +187,25 @@ import { Message, Markdown } from "@agentaily/design-system";
 
 For credential/connection UIs there are also `SecretField` (masked **mono** key/secret input + show/hide — for API keys and the like; a login/signup password box instead uses `Input` with `type="password" reveal`, which sprouts the same eye toggle inside the standard form-field chrome), `StatusPill` (connection status chip), and `TestRow` / `HelpSteps` (connection-card atoms). `ConnectionCard` is the shared connection-card shell (built on `Card`: collapsible header + body + test row + status tint); `DeepSeekCard` (LLM key) composes it into a **pure-display** card — props in, events out, **zero state / localStorage / gating**; the caller owns the config, persistence, Save, backend errors, and any readiness gate (same headless philosophy as `Form.useForm` / `Queue.useQueue`). Build cards for other services by composing `ConnectionCard` the same way. Connected cards collapse to a one-line summary by default (`collapsible`). `AccountControl` (auth) takes `onProfile` to make its email row jump to a profile/account screen. `Icon` is the unified Lucide set (`Icon.names` lists all); `BrandMark` is the agentaily mark + wordmark; `RotatingTagline` is the animated brand headline (typing phrases + flowing rainbow gradient + trailing cursor — used in the auth brand panel and the marketing hero). `MarkupLayer` (review) is a point-at-an-element overlay driven by `data-mk-label`.
 
+### Runtime — theme switching, i18n, cross-subdomain persistence (non-visual)
+
+The package also ships the **browser runtime** (Providers / hooks / utilities, no rendered UI) absorbed from `@agentaily/web-kit` — use these instead of hand-rolling theme toggles, locale state, or preference storage. `@agentaily/web-kit` is being deprecated; import this from `@agentaily/design-system`.
+
+```jsx
+import {
+  ThemeProvider,
+  useTheme,
+  themeInitScript,
+  createI18n,
+  createStorage,
+  persistentState,
+} from "@agentaily/design-system";
+```
+
+- **Theme.** Wrap your app in `<ThemeProvider>`. It resolves the theme (`light | dark`, resolving `system` via `prefers-color-scheme`) and applies it to `<html data-theme="…">` — which is exactly what the component tokens read (so this is how you drive dark mode). `useTheme()` → `{ theme, resolvedTheme, setTheme }` for a theme switcher. To kill the flash-of-wrong-theme on first paint, inline `themeInitScript()` (a small, XSS-safe, dependency-free string) synchronously in `<head>` before any paint.
+- **i18n.** `createI18n({ catalogs, defaultLocale })` returns `{ LocaleProvider, useLocale, useMessages }`. The mechanism is shared; each product injects its own message catalogs. Initial locale resolves persisted → `navigator.language` → fallback; `useMessages()` is typed to the catalog shape. (DS **components** stay locale-agnostic via their `copy` props — this is the app-level locale state that feeds those props.)
+- **Persistence.** `createStorage({ backend, cookieDomain, keyPrefix })` builds a `PreferenceStorage` that defaults to a cross-`.agentaily.com`-subdomain cookie (so theme/locale stay consistent across subdomains), falling back through localStorage → domain-less cookie → in-memory. It **never throws** — SSR and private mode degrade silently. `persistentState({ key, defaultValue, storage, decode, encode })` binds one typed value to it. `ThemeProvider` / `createI18n` accept a `storage` config to customize this.
+
 ## Use it for throwaway artifacts (slides, mocks, static HTML)
 
 Link the published stylesheet and the logo, then build with the tokens/classes:
